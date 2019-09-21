@@ -2,6 +2,7 @@ import re
 import unicodedata
 from utilities import *
 import string
+import emoji
 
 
 # make global set punctuation
@@ -10,6 +11,8 @@ list_punctuations_out = ['”', '”', "›", "“"]
 for e_punc in list_punctuations_out:
     set_punctuations.add(e_punc)
 
+list_emoji_not_in_lib = [u'\U0001f1fb', u'\ufe0f', u'\u20e3', u'\U0001f3fb', u'\U0001f3fb0', u'\u200e']
+list_emoji_keep = ["=(", "=)", ":v", ":3", ":)", ":(", ":D", "^^", "<URL>"]
 
 dict_typing = get_dict_typing_error("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/typing_error_telex.csv")
 
@@ -65,7 +68,55 @@ def remove_multi_space(text):
     return "".join(text)
 
 
-def handle_punctuation(text):
+def norm_emoji_make_by_punctuation(text):
+    for i in range(3):
+        text = text.replace(":))))", ":))")
+        text = text.replace(":)))", ":))")
+        text = text.replace("=))))", "=))")
+        text = text.replace("=)))", "=))")
+        text = text.replace(":(((", ":((")
+        text = text.replace(":vv", ":v")
+        text = text.replace(": \) \) \)", ": \) \)")
+        text = text.replace(": \) \)", ": \)")
+        text = text.replace("= \) \) \)", "= \) \)")
+        text = text.replace("= \) \)", "= \)")
+        text = text.replace(": \( \( \(", ": \( \(")
+        text = text.replace(": \( \(", ": \(")
+        text = text.replace("= \( \( \(", "= \( \(")
+        text = text.replace("= \( \(", "= \(")
+
+    text = text.replace(":))", ":)")
+    text = text.replace("=))", "=)")
+    text = text.replace(":((", ":(")
+    text = text.replace("=((", "=(")
+    text = text.replace(": \)", ":)")
+    text = text.replace("= \)", "=)")
+    text = text.replace(": \(", ":(")
+    text = text.replace("= \(", "=(")
+    text = text.replace(":vv", ":v")
+    text = text.replace("\ ?", "?")
+    text = text.replace("\\?", "?")
+
+    return text
+
+
+def handle_emoji(text):
+    for e_emoji_punc in list_emoji_keep:
+        text = text.replace(e_emoji_punc, " {} ".format(e_emoji_punc))
+
+    list_new_char = []
+    for e_char in text:
+        if e_char in emoji.UNICODE_EMOJI or e_char in list_emoji_not_in_lib:
+            list_new_char.append(" {} ".format(e_char))
+        else:
+            list_new_char.append(e_char)
+
+    text = "".join(list_new_char)
+
+    return text
+
+
+def handle_punctuation_one_word(text):
     # need replace | for split field in csv file
 
     l_new_char = []
@@ -78,6 +129,19 @@ def handle_punctuation(text):
     text = "".join(l_new_char)
 
     return text
+
+
+def handle_punctuation_sent(text):
+    text = remove_multi_space(text)
+    arr_text = text.split(" ")
+    print(arr_text)
+    l_new_token = []
+    for e_token in arr_text:
+        if e_token not in list_emoji_keep:
+            e_token = handle_punctuation_one_word(e_token)
+        l_new_token.append(e_token)
+
+    return " ".join(l_new_token)
 
 
 def norm_text_with_sub_word(text, s, convert_number=True):
@@ -107,9 +171,20 @@ def norm_text_with_sub_word(text, s, convert_number=True):
 
 def handle_text_before_make_piece(text):
     text = normalize_text(text)
-    text = handle_punctuation(text)
+    text = handle_punctuation_one_word(text)
     text = fix_typing_error(text, dict_typing)
     text = remove_multi_space(text)
+    return text
+
+
+def handle_text_hate_speech(text, is_lower=False):
+    text = normalize_text(text)
+    text = norm_emoji_make_by_punctuation(text)
+    text = handle_emoji(text)
+    text = handle_punctuation_sent(text)
+    text = remove_multi_space(text)
+    if is_lower:
+        text = text.lower()
     return text
 
 

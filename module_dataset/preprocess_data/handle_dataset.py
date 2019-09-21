@@ -54,6 +54,25 @@ def get_data_contest(path_data, path_preprocess_data, path_label=None):
             wf.write(line_write_file)
 
 
+def handle_data_with_punc_emoji_space(path_data_process_raw, path_data_after_process, is_train=True):
+    with open(path_data_after_process, "w") as wf:
+        with open(path_data_process_raw, "r") as rf:
+            for e_line in rf.readlines():
+                e_line = e_line.replace("\n", "").split("|")
+                if is_train:
+                    text = e_line[0]
+                    id_data = e_line[1]
+                    text = handle_text_hate_speech(text)
+                    line_write = "{}|{}\n".format(text, id_data)
+                else:
+                    id_data = e_line[0]
+                    text = e_line[1]
+                    text = handle_text_hate_speech(text)
+                    line_write = "{}|{}\n".format(id_data, text)
+
+                wf.write(line_write)
+
+
 def make_corpus_data(path_file_train, path_corpus):
     with open(path_corpus, 'a') as wf:
         with open(path_file_train, 'r') as rf:
@@ -215,6 +234,8 @@ if __name__ == '__main__':
     path_cf = "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/preprocess_data/config_dataset.json"
     cf = load_config(path_cf)
     path_raw_data = cf['train_raw_text']
-    path_preprocess_data = cf['train_preprocess_text']
+    path_preprocess_data = cf['test_preprocess_text']
+    path_process_punct = cf['test_proces_emoji_punct']
     path_label = cf['train_label']
-    get_data_contest(path_raw_data, path_preprocess_data, path_label)
+    # get_data_contest(path_raw_data, path_preprocess_data, path_label)
+    handle_data_with_punc_emoji_space(path_preprocess_data, path_process_punct, is_train=False)
