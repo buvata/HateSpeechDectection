@@ -6,6 +6,52 @@ from sklearn.externals import joblib
 from sklearn.model_selection import train_test_split
 import pickle
 import os
+import pandas as pd
+
+
+def get_data_contest(path_data, path_preprocess_data, path_label=None):
+
+    a = []
+    l_full_sample = []
+
+    if path_label is not None:
+        dict_label_id = {}
+        regex = 'train_'
+        df = pd.read_csv(path_label, sep=",", names=["id", "label"])
+        list_id = df.id.tolist()
+        list_label = df.label.tolist()
+        for i in range(len(list_id)):
+            dict_label_id[list_id[i]] = list_label[i]
+
+    else:
+        regex = 'test_'
+
+    with open(path_data, 'r') as file:
+        for line in file:
+            if regex in line:
+                l_full_sample.append(a)
+                a = [line]
+            elif line != '\n':
+                a.append(line)
+
+    l_full_sample.append(a)
+
+    with open(path_preprocess_data, "w") as wf:
+        for e_sample in l_full_sample[1:]:
+            full_line = " ".join(e_sample).replace("\n", "").replace("|", ",")
+
+            id_data = full_line.split(",")[0]
+            data = ",".join(full_line.split(",")[1:])
+
+            if data[0] == '"' and data[-1] == '"':
+                data = data[1: -1]
+
+            if path_label is None:
+                line_write_file = "{}|{}\n".format(id_data, data)
+            else:
+                line_write_file = "{}|{}\n".format(data, dict_label_id[id_data])
+            print(line_write_file)
+            wf.write(line_write_file)
 
 
 def make_corpus_data(path_file_train, path_corpus):
@@ -160,9 +206,15 @@ if __name__ == '__main__':
 
     # norm_data_format("../dataset/data_for_train/exp_augment_train.csv", "normal.csv")
 
-    path_file_train_origin = "../preprocess_data/normal.csv"
-    path_file_train_augment = "../dataset/data_for_train/exp_augment.csv"
-    path_dict_synonym = "../dataset/support_data/dict_synonym.json"
-    make_data_with_augmentation(path_file_train_origin, path_file_train_augment,
-                                path_dict_synonym,
-                                n_augment_per_sent=5)
+    # path_file_train_origin = "../preprocess_data/normal.csv"
+    # path_file_train_augment = "../dataset/data_for_train/exp_augment.csv"
+    # path_dict_synonym = "../dataset/support_data/dict_synonym.json"
+    # make_data_with_augmentation(path_file_train_origin, path_file_train_augment,
+    #                             path_dict_synonym,
+    #                             n_augment_per_sent=5)
+    path_cf = "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/preprocess_data/config_dataset.json"
+    cf = load_config(path_cf)
+    path_raw_data = cf['train_raw_text']
+    path_preprocess_data = cf['train_preprocess_text']
+    path_label = cf['train_label']
+    get_data_contest(path_raw_data, path_preprocess_data, path_label)

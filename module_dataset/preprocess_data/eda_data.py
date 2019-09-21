@@ -21,6 +21,9 @@ def get_important_kw(path_data_train, path_save_important_kw, n_kw_extract=50):
     get_feature_importance(list_train_data, list_label, path_save_important_kw, n_kw_extract)
 
 
+
+
+
 if __name__ == '__main__':
     path_config = "/home/trangtv/Documents/project/TextClassification/module_dataset/preprocess_data/" \
                   "config_dataset.json"

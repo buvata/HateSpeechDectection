@@ -11,7 +11,7 @@ for e_punc in list_punctuations_out:
     set_punctuations.add(e_punc)
 
 
-dict_typing = get_dict_typing_error("/home/taibv/Documents/TextClassification/module_dataset/dataset/support_data/typing_error_telex.csv")
+dict_typing = get_dict_typing_error("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/typing_error_telex.csv")
 
 
 patterns = {
