@@ -45,18 +45,18 @@
 # list_indicies.reverse()
 # print(list_indicies)
 
-import torch.nn as nn
-import torch
-
-a = torch.rand((3, 4, 230))
-lstm_t = nn.LSTM(230, 5, num_layers=1, batch_first=True, bidirectional=True)
-output, (last_hidden, last_cell) = lstm_t(a)
-
-# print(last_hidden)
-# output = output.permute(0, 2, 1)
-print(output)
-print(output.shape)
-print(output[:, -1, :].shape)
+# import torch.nn as nn
+# import torch
+#
+# a = torch.rand((3, 4, 230))
+# lstm_t = nn.LSTM(230, 5, num_layers=1, batch_first=True, bidirectional=True)
+# output, (last_hidden, last_cell) = lstm_t(a)
+#
+# # print(last_hidden)
+# # output = output.permute(0, 2, 1)
+# print(output)
+# print(output.shape)
+# print(output[:, -1, :].shape)
 # merged_state = torch.cat([s for s in last_hidden], 1)
 # print(merged_state.shape)
 # torch.Size([2, 10])
@@ -91,3 +91,24 @@ print(output[:, -1, :].shape)
 # print(a)
 # a = a.reshape(3, -1)
 # print(a)
+# import pandas as pd
+#
+# path_label = "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/raw_data/03_train_label.csv"
+# df = pd.read_csv(path_label, sep=",", names=["id", "label"])
+#
+# # for key, value in df.items():
+# #     print(key)
+# #     print(value)
+#
+# # print(dict_id_label['train_dudzhmrivs'])
+# print(df.id.tolist())
+from module_dataset.preprocess_data.handle_text import *
+a = "Buồn vl d:((("
+print(a)
+b = handle_text_hate_speech(a, is_lower=True)
+print(b)
+
+
+
+
+
