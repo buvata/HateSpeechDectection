@@ -1,0 +1,4 @@
+{
+  "path_data_raw_train": "/home/trangtv/Documents/project/TextClassification/module_dataset/dataset/raw_data/train_data.csv",
+  "path_save_important_kw": "/home/trangtv/Documents/project/TextClassification/module_dataset/dataset/support_data/important_kw.csv"
+}
