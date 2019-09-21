@@ -4,6 +4,7 @@
   "train_preprocess_text": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/raw_data/train_preprocess_text.csv",
   "test_preprocess_text": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/raw_data/test_preprocess_text.csv",
   "train_label": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/raw_data/03_train_label.csv",
-  "train_proces_emoji_punct": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/raw_data/train_process_emoji_punct.csv",
-  "test_proces_emoji_punct": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/raw_data/test_process_emoji_punct.csv"
+  "train_process_emoji_punct": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/raw_data/train_process_emoji_punct.csv",
+  "test_process_emoji_punct": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/raw_data/test_process_emoji_punct.csv",
+  "path_save_important_kw": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/important_kw.csv"
 }

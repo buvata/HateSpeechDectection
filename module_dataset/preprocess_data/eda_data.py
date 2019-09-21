@@ -13,7 +13,7 @@ def get_important_kw(path_data_train, path_save_important_kw, n_kw_extract=50):
             arr_e_line = e_line.replace("\n", "").split("|")
 
             text = handle_text_before_make_piece(arr_e_line[0])
-            text = ViTokenizer.tokenize(text)
+            # text = ViTokenizer.tokenize(text)
 
             list_train_data.append(text)
             list_label.append(arr_e_line[1])
@@ -22,7 +22,7 @@ def get_important_kw(path_data_train, path_save_important_kw, n_kw_extract=50):
 
 
 if __name__ == '__main__':
-    path_config = "/home/trangtv/Documents/project/TextClassification/module_dataset/preprocess_data/" \
+    path_config = "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/preprocess_data/" \
                   "config_dataset.json"
     cf = load_config(path_config)
-    get_important_kw(cf['path_data_raw_train'], cf['path_save_important_kw'], 100)
+    get_important_kw(cf['train_process_emoji_punct'], cf['path_save_important_kw'], 200)
