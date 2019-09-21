@@ -10,7 +10,7 @@ import pandas as pd
 
 def get_feature_importance(train_data, target, path_save_important_kw, n_feature_important=50):
     pipeline = Pipeline([
-        ('vect', CountVectorizer(ngram_range=(1, 2))),
+        ('vect', CountVectorizer(ngram_range=(1, 3))),
         ('tfidf', TfidfTransformer()),
         ('clf', RandomForestClassifier())
     ])
