@@ -1,0 +1,32 @@
+file handle_text to provide function in level of text sentence:
+    - remove tone
+    - handle punctuation
+    - normalize text
+    - fix typing error
+    - norm text with sentence piece model
+
+
+file hanlde_dataset to provide function in level file:
+    - make corpus dataset with handle text before make piece
+    - build model sentence piece
+
+file eda_data to provide insight view from data:
+    - get list important keyword (after tokenize) for build dict synonym (using simple svm classify to
+    get important keyword
+
+file handle_data_augmentation:
+    - 3 type augment:
+        - random delete word
+        - random remove tone word
+        - remove all tone
+        - back translate
+        - replace synonym
+
+follow handle process:
+    - data raw
+    - build corpus (with preprocess norm text)
+    - get important keyword
+    - build synonym
+    - make data augmentation (can we have more type dataset of augmentation)
+
+
