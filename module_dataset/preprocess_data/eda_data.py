@@ -12,9 +12,9 @@ def get_important_kw(path_data_train, path_save_important_kw, n_kw_extract=50):
         for e_line in rf.readlines():
             arr_e_line = e_line.replace("\n", "").split("|")
 
-            text = handle_text_before_make_piece(arr_e_line[0])
+            # text = handle_text_before_make_piece(arr_e_line[0])
             # text = ViTokenizer.tokenize(text)
-
+            text = arr_e_line[0].lower()
             list_train_data.append(text)
             list_label.append(arr_e_line[1])
 
