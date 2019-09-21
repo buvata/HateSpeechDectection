@@ -1,0 +1,4 @@
+label_str,label_id
+CLEAN,0
+OFFENSIVE_BUT_NOT_HATE,1
+HATE,2

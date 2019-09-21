@@ -1,0 +1,2 @@
+- This dataset is under the control of VLSP.ORG.VN for research purposes. To obtain the data for research, you're required to sign the agreement and send back the signed version to VLSP. For reloading text data, please see example at https://github.com/sonvx/vlsp2019_hatespeech_task. 
+- For more information, please send email to vlsp.resources@gmail.com.
