@@ -1,1 +1,1 @@
-{"use_xavier_weight_init": true, "word_embedding_dim": 200, "char_embedding_dim": 64, "filter_num": 15, "kernel_sizes": [2, 3], "dropout_cnn": 0.5, "dropout_ffw": 0.5, "learning_rate": 0.001, "weight_decay": 10}
+{"use_xavier_weight_init": true, "word_embedding_dim": 300, "char_embedding_dim": 64, "filter_num": 15, "kernel_sizes": [2, 3, 4], "dropout_cnn": 0.5, "dropout_ffw": 0.5, "learning_rate": 0.001, "weight_decay": 0, "D_cnn": "2_D"}

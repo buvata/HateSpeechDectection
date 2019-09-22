@@ -9,7 +9,7 @@ def predict_test(path_data_test, path_save_model, path_model_checkpoint, type_mo
     test_preds = []
     test_weight_preds = []
     for preds in list_predict:
-        preds = torch.sigmoid(preds)
+        preds = torch.sigmoid(preds).cpu()
 
         w_pred = preds.data.numpy()  # weight_predict
         y_pred = torch.max(preds, 1)[1].numpy()  # return label
@@ -23,7 +23,7 @@ def predict_test(path_data_test, path_save_model, path_model_checkpoint, type_mo
     return test_preds, test_weight_preds
 
 
-def error_predict_dl(path_data_test, path_save_model):
+def error_predict_dl(path_data_test, path_save_model, path_model_checkpoint):
     x_test, y_test = load_text_label(path_data_test, is_train=True)
     y_test = list(map(int, y_test))
 
@@ -33,13 +33,15 @@ def error_predict_dl(path_data_test, path_save_model):
     error_text = []
     error_weight = []
     error_label = []
+    true_label = []
     for i in indices:
         error_text.append(x_test[i])
         error_weight.append(test_weight_preds[i])
         error_label.append(test_preds[i])
+        true_label.append(y_test[i])
 
-    report = list(zip(error_text, error_weight, error_label))
-    cv_df = pd.DataFrame(report, columns=['text_data', 'predict_weight', 'predict_label'])
+    report = list(zip(error_text, error_weight, error_label, true_label))
+    cv_df = pd.DataFrame(report, columns=['text_data', 'predict_weight', 'predict_label', 'true_label'])
     name_error_result = os.path.join(path_save_model, "error_result.csv")
     cv_df.to_csv(name_error_result, index=False)
     return cv_df
@@ -71,9 +73,9 @@ def plot_confusion_matrix_dl(path_data_test, path_save_model, path_model_checkpo
 
     y_pred, _ = predict_test(path_data_test, path_save_model, path_model_checkpoint, type_model)
 
-    error_predict_dl(path_data_test, path_save_model)
+    error_predict_dl(path_data_test, path_save_model, path_model_checkpoint)
 
-    labels = ['pos', 'neg']
+    labels = ['clean', 'offensive', 'hate']
     print(classification_report(y_test, y_pred, target_names=labels))
 
     skplt.metrics.plot_confusion_matrix(
@@ -90,7 +92,7 @@ def plot_confusion_matrix_ml(path_data_test, path_data_test_ft, path_save_model_
 
     error_predict_ml(path_data_test, path_data_test_ft, path_save_model_ml)
 
-    labels = ['pos', 'neg']
+    labels = ['clean', 'offensive', 'hate']
     print(classification_report(y_test, y_pred, target_names=labels))
 
     skplt.metrics.plot_confusion_matrix(
@@ -100,19 +102,17 @@ def plot_confusion_matrix_ml(path_data_test, path_data_test_ft, path_save_model_
     plt.show()
 
 if __name__ == '__main__':
-    """
     # test dl
     path_save_model = "../module_train/save_model/cnn_classify"
-    path_data_test = "../module_dataset/dataset/data_for_train/exp_test.csv"
-    path_model_checkpoint = "../module_train/save_model/cnn_classify/model_lm_lstm_cnn_epoch_0_train_acc_0.6_loss_1.0921_test_acc_1.0_loss_0.3284"
+    path_data_test = "../module_dataset/dataset/data_for_train/dl/validation_dl.csv"
+    path_model_checkpoint = "../module_train/save_model/cnn_classify/model_cnn_epoch_14_train_acc_0.9578_loss_0.1216_test_acc_0.9405_loss_0.295"
 
     label, weight = predict_test(path_data_test, path_save_model, path_model_checkpoint, type_model='cnn_classify')
 
     plot_confusion_matrix_dl(path_data_test, path_save_model, path_model_checkpoint, type_model='cnn_classify')
-    """
-    # test ml
-    path_data_test = "../module_dataset/dataset/data_for_train/exp_train.csv"
-    path_data_test_ft = "../module_train/save_model/model_ml/data_ft.pkl"
-    path_save_model_ml = "../module_train/save_model/model_ml/random_forest_model.pkl"
-    plot_confusion_matrix_ml(path_data_test, path_data_test_ft, path_save_model_ml)
+    # # test ml
+    # path_data_test = "../module_dataset/dataset/data_for_train/exp_train.csv"
+    # path_data_test_ft = "../module_train/save_model/model_ml/data_ft.pkl"
+    # path_save_model_ml = "../module_train/save_model/model_ml/random_forest_model.pkl"
+    # plot_confusion_matrix_ml(path_data_test, path_data_test_ft, path_save_model_ml)
 

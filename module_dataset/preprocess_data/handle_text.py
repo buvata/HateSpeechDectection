@@ -179,6 +179,7 @@ def handle_text_before_make_piece(text):
 
 def handle_text_hate_speech(text, is_lower=False):
     text = normalize_text(text)
+    text = fix_typing_error(text, dict_typing)
     text = norm_emoji_make_by_punctuation(text)
     text = handle_emoji(text)
     text = handle_punctuation_sent(text)
@@ -194,3 +195,4 @@ if __name__ == '__main__':
     dict_typing = get_dict_typing_error("../module_dataset/dataset/support_data/typing_error_telex.csv")
     print(fix_typing_error(text_test, dict_typing))
     '''
+    print(handle_text_hate_speech("nhìn con ma nunwgs vl"))

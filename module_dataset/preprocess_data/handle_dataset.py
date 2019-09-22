@@ -149,7 +149,7 @@ def split_train_test(path_file_train, path_save_data, name_train, name_test, tes
     list_y_full = []
 
     with open(path_file_train, 'r') as rf:
-        for e_line in rf.readlines()[1:]:
+        for e_line in rf.readlines():
             arr_line = e_line.replace("\n", "").split("|")
             list_x_full.append(arr_line[0])
             list_y_full.append(arr_line[1])
@@ -235,7 +235,11 @@ if __name__ == '__main__':
     cf = load_config(path_cf)
     path_raw_data = cf['train_raw_text']
     path_preprocess_data = cf['test_preprocess_text']
-    path_process_punct = cf['test_proces_emoji_punct']
+    path_process_punct = cf['test_process_emoji_punct']
     path_label = cf['train_label']
     # get_data_contest(path_raw_data, path_preprocess_data, path_label)
-    handle_data_with_punc_emoji_space(path_preprocess_data, path_process_punct, is_train=False)
+    # handle_data_with_punc_emoji_space(path_preprocess_data, path_process_punct, is_train=False)
+    split_train_test(cf['train_process_emoji_punct'],
+                     cf['path_folder_save_data_for_dl'],
+                     cf['name_train'],
+                     cf['name_test'])

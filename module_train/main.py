@@ -9,6 +9,7 @@ from module_train.train_ml import *
 from module_evaluate import reference_model
 from module_evaluate import evaluate
 
+
 def train_model_dl(cf_common, cf_model):
     path_data = cf_common['path_data']
     path_data_train = cf_common['path_data_train']
@@ -93,28 +94,29 @@ def train_ml(path_save_model, path_data, name_train, name_test=None):
 if __name__ == '__main__':
     cf_common = {
         "path_save_model": "save_model/",
-        "path_data": "../module_dataset/dataset/data_for_train/",
-        "path_data_train": "exp_train.csv",
-        "path_data_test": "exp_test.csv",
-        "prefix_model": "model_lm_lstm_cnn",
-        "log_file": "log_file_13.txt",
+        "path_data": "../module_dataset/dataset/data_for_train/dl/",
+        "path_data_train": "train_dl.csv",
+        "path_data_test": "validation_dl.csv",
+        "prefix_model": "model_cnn",
+        "log_file": "log_file_train_cnn.txt",
         "type_model": "cnn_classify",
         "num_epochs": 50,
-        "min_freq_word": 2,
-        "min_freq_char": 2,
-        "batch_size": 3
+        "min_freq_word": 5,
+        "min_freq_char": 5,
+        "batch_size": 32
     }
 
     cf_model_cnn_classify = {
         'use_xavier_weight_init': True,
-        'word_embedding_dim': 200,
+        'word_embedding_dim': 300,
         'char_embedding_dim': 64,
         'filter_num': 15,
         'kernel_sizes': [2, 3, 4],
         'dropout_cnn': 0.5,
         'dropout_ffw': 0.5,
         'learning_rate': 0.001,
-        'weight_decay': 0
+        'weight_decay': 0,
+        'D_cnn': "2_D"
     }
 
     cf_model_char_base = {
@@ -159,13 +161,3 @@ if __name__ == '__main__':
 
     else:
         train_model_dl(cf_common, cf_model_lstm_cnn_lm)
-
-
-
-
-
-
-
-
-
-
