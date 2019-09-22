@@ -10,17 +10,16 @@ import pandas as pd
 
 def get_feature_importance(train_data, target, path_save_important_kw, n_feature_important=200):
     pipeline = Pipeline([
-        ('vect', CountVectorizer(ngram_range=(1, 3))),
+        ('vect', CountVectorizer(ngram_range=(1, 4))),
         ('tfidf', TfidfTransformer()),
-        ('clf', RandomForestClassifier(criterion='gini', n_estimators=100))
+        ('clf', RandomForestClassifier(criterion='gini', n_estimators=150))
     ])
     pipeline.set_params(clf__n_estimators=10).fit(train_data, target)
 
     vocab = pipeline.named_steps['vect'].get_feature_names()
-    print(vocab)
-
+    
     feature_important = pipeline.named_steps['clf'].feature_importances_
-    print(len(feature_important))
+   
     plot_feature_importance(feature_important, vocab, path_save_important_kw, n_feature_important)
 
 

@@ -73,7 +73,7 @@ def plot_confusion_matrix_dl(path_data_test, path_save_model, path_model_checkpo
 
     error_predict_dl(path_data_test, path_save_model)
 
-    labels = ['pos', 'neg']
+    labels = ['clean', 'offensive', 'hate']
     print(classification_report(y_test, y_pred, target_names=labels))
 
     skplt.metrics.plot_confusion_matrix(
@@ -90,7 +90,7 @@ def plot_confusion_matrix_ml(path_data_test, path_data_test_ft, path_save_model_
 
     error_predict_ml(path_data_test, path_data_test_ft, path_save_model_ml)
 
-    labels = ['pos', 'neg']
+    labels = ['clean', 'offensive', 'hate']
     print(classification_report(y_test, y_pred, target_names=labels))
 
     skplt.metrics.plot_confusion_matrix(
