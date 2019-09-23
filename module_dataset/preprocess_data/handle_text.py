@@ -105,7 +105,7 @@ def norm_text_with_sub_word(text, s, convert_number=True):
     return " ".join(n_arr).replace("\n", "")
 
 
-def handle_text_before_make_piece(text):
+def handle_text_before_make_piece(text):nnnnnnnnnnnn
     text = normalize_text(text)
     text = handle_punctuation(text)
     text = fix_typing_error(text, dict_typing)
