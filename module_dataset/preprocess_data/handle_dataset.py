@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 import pickle
 import os
 import pandas as pd
+from gensim.models import FastText
 
 
 def get_data_contest(path_data, path_preprocess_data, path_label=None):
@@ -73,16 +74,15 @@ def handle_data_with_punc_emoji_space(path_data_process_raw, path_data_after_pro
                 wf.write(line_write)
 
 
-def make_corpus_data(path_file_train, path_corpus):
+def make_corpus_data(path_file_train, path_corpus, is_train=True):
     with open(path_corpus, 'a') as wf:
         with open(path_file_train, 'r') as rf:
             for e_line in rf.readlines():
-                text = e_line.split("|")[2].replace("\n", "")
+                if is_train:
+                    text = e_line.split("|")[0].replace("\n", "")
+                else:
+                    text = e_line.split("|")[1].replace("\n", "")
 
-                text = handle_text_before_make_piece(text)
-                wf.write(text + "\n")
-
-                text = remove_accent(text)
                 wf.write(text + "\n")
 
 
@@ -201,6 +201,39 @@ def make_dataset_for_ml(path_file_train_augment, path_save_pickle_data,
                 pickle.dump([x_train], wf)
 
 
+def train_embedding_fasttext(cf):
+    path_corpus = cf['path_corpus_data']
+    l_split_lines = []
+    with open(path_corpus, "r") as r_corpus:
+        for e_line in r_corpus.readlines():
+            e_line = e_line.replace("\n", "")
+            e_line = e_line.replace("\r", "")
+            split_line = e_line.split(" ")
+            l_split_lines.append(split_line)
+
+    ft = FastText(l_split_lines, sg=1, iter=5, min_n=2, min_count=2, size=200)
+    print(ft.wv.most_similar("vl", topn=20))
+    ft.wv.save_word2vec_format("social_embedding_200.txt", binary=False)
+
+
+def making_exception_list_kw_from_synonym(cf):
+    path_synonym_data = cf['path_synonym']
+    path_exception_word = cf['path_exception_word']
+
+    with open(path_exception_word, "w") as wf:
+        list_full_token = []
+        with open(path_synonym_data, "r") as rf:
+            for e_line in rf.readlines():
+                e_line = e_line.replace(", ", ",").replace("\n", ",")
+                e_line_no_accent = remove_accent(e_line)
+                full_line = e_line + e_line_no_accent
+                list_token_synonym = full_line.split(",")
+                list_full_token += list_token_synonym
+
+        for e_token in list(set(list_full_token)):
+            wf.write("{}\n".format(e_token))
+
+
 if __name__ == '__main__':
     '''
     path_file_train = "../dataset/raw_data/train_data.csv"
@@ -239,7 +272,10 @@ if __name__ == '__main__':
     path_label = cf['train_label']
     # get_data_contest(path_raw_data, path_preprocess_data, path_label)
     # handle_data_with_punc_emoji_space(path_preprocess_data, path_process_punct, is_train=False)
-    split_train_test(cf['train_process_emoji_punct'],
-                     cf['path_folder_save_data_for_dl'],
-                     cf['name_train'],
-                     cf['name_test'])
+    # split_train_test(cf['train_process_emoji_punct'],
+    #                  cf['path_folder_save_data_for_dl'],
+    #                  cf['name_train'],
+    #                  cf['name_test'])
+    # make_corpus_data(cf['test_process_emoji_punct'], cf['path_corpus_data'], is_train=False)
+    # train_embedding_fasttext(cf)
+    making_exception_list_kw_from_synonym(cf)

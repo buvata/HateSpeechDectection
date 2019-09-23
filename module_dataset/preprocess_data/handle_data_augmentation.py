@@ -4,6 +4,7 @@ import random
 from random import shuffle
 from module_dataset.preprocess_data.handle_text import *
 from textblob import TextBlob
+from utilities import *
 
 
 def remove_all_tone(text):
@@ -108,6 +109,23 @@ def process_augment_data(text,
         list_text_augment.append(text_process)
 
     return list(set(list_text_augment))
+
+
+def process_augment_data_hate_speech(text,
+                                     path_exception_list,
+                                     path_synonym,
+                                     n_duplicate_sent=2,
+                                     n_augment_per_sent=5):
+
+    list_exception = get_list_from_file(path_exception_list)
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
