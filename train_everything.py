@@ -102,12 +102,16 @@
 #
 # # print(dict_id_label['train_dudzhmrivs'])
 # print(df.id.tolist())
-from module_dataset.preprocess_data.handle_text import *
-a = "Buồn vl d:((("
-print(a)
-b = handle_text_hate_speech(a, is_lower=True)
-print(b)
+# from module_dataset.preprocess_data.handle_text import *
+# a = "Buồn vl d:((("
+# print(a)
+# b = handle_text_hate_speech(a, is_lower=True)
+# print(b)
 
+a = ["1", "2", '3']
+print(a)
+a.remove("1")
+print(a)
 
 
 

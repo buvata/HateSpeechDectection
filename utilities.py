@@ -21,9 +21,16 @@ def get_list_from_file(path_word_list):
 
 
 def get_dict_synonym(path_file_dict):
+    dict_sym = {}
     with open(path_file_dict, "r") as rf:
-        dict_synonym = json.load(rf)
-    return dict_synonym
+        for e_line in rf.readlines():
+            e_line = e_line.replace(", ", ",").replace("\n", "")
+            arr_line = e_line.split(",")
+            for e_token in arr_line:
+                tmp = arr_line
+                tmp.remove(e_token)
+                dict_sym[e_token] = tmp
+    return dict_sym
 
 
 def load_config(path_file_config):
@@ -45,3 +52,9 @@ def get_name_folder_file(path_file):
     path_folder = "/".join(arr_path[:-1])
     name_file = arr_path[-1]
     return path_folder, name_file
+
+
+if __name__ == '__main__':
+    dict_sym = get_dict_synonym("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/dict_synonym.csv")
+    print(dict_sym)
+

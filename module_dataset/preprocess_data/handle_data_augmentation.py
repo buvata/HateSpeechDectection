@@ -117,21 +117,34 @@ def process_augment_data_hate_speech(text,
                                      n_duplicate_sent=2,
                                      n_augment_per_sent=5):
 
-    list_exception = get_list_from_file(path_exception_list)
+    list_word_exception = get_list_from_file(path_exception_list)
+    dict_synonym = get_dict_synonym(path_synonym)
+    list_sent_augment = []
 
+    text_delete_word = random_delete_word(text, list_word_exception)
+    list_sent_augment.append(text_delete_word)
 
+    for i in range(n_augment_per_sent):
+        prob = random.random()
+        if prob < 0.10:
+            text = random_delete_word(text, list_word_exception)
+        if prob < 0.2:
+            text = random_change_synonym_word(text, dict_synonym)
 
+        list_sent_augment.append(text)
 
-
-
-
-
+    list_sent_augment = list(set(list_sent_augment))
+    list_sent_augment += [text] * n_duplicate_sent
+    return list_sent_augment
 
 
 if __name__ == '__main__':
     text = "kiểu dáng đẹp nhưng chất lượng và cách may quá không được thời gian giao hàng rất nhanh"
     # print(back_translate_data(text))
     path_1 = "../dataset/support_data/exception_word.csv"
-    path_2 = "../dataset/support_data/dict_synonym.json"
-    lt = process_augment_data(text, path_2)
+    path_2 = "../dataset/support_data/dict_synonym.csv"
+    # lt = process_augment_data(text, path_2)
+    # print(lt)
+    lt = process_augment_data_hate_speech("cái ảnh cà khịa vl :)", path_1, path_2)
     print(lt)
+
