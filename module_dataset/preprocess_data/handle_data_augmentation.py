@@ -25,6 +25,15 @@ def random_remove_tone(text, thresh_hold_active=0.3):
     return " ".join(n_arr_text)
 
 
+# TODO idea: check all the word in sent will have mask is exception and can't be delete
+def check_mask_word_in_list_exception_2_3(text, list_word_exception):
+    for e_word_exception in list_word_exception:
+        if e_word_exception in text:
+            pass
+
+
+
+
 def random_delete_word(text, list_word_exception, thresh_hold_active=0.1):
     arr_text = text.split()
     n_arr_text = []
@@ -115,7 +124,7 @@ def process_augment_data_hate_speech(text,
                                      path_exception_list,
                                      path_synonym,
                                      n_duplicate_sent=2,
-                                     n_augment_per_sent=5):
+                                     n_augment_per_sent=2):
 
     list_word_exception = get_list_from_file(path_exception_list)
     dict_synonym = get_dict_synonym(path_synonym)
@@ -124,12 +133,15 @@ def process_augment_data_hate_speech(text,
     text_delete_word = random_delete_word(text, list_word_exception)
     list_sent_augment.append(text_delete_word)
 
+    text_random_change_synonym_word = random_change_synonym_word(text, dict_synonym, thresh_hold_active=0.3)
+    list_sent_augment.append(text_random_change_synonym_word)
+
     for i in range(n_augment_per_sent):
         prob = random.random()
-        if prob < 0.10:
-            text = random_delete_word(text, list_word_exception)
-        if prob < 0.2:
-            text = random_change_synonym_word(text, dict_synonym)
+        if prob < 0.5:
+            text = random_delete_word(text, list_word_exception, thresh_hold_active=0.2)
+        if prob < 0.5:
+            text = random_change_synonym_word(text, dict_synonym, thresh_hold_active=0.2)
 
         list_sent_augment.append(text)
 
