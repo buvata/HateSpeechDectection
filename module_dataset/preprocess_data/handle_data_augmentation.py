@@ -7,6 +7,29 @@ from textblob import TextBlob
 from utilities import *
 
 
+def get_dict_synonym(path_file_dict):
+    dict_sym = {}
+    with open(path_file_dict, "r") as rf:
+        for e_line in rf.readlines():
+            e_line = e_line.replace(", ", ",").replace("\n", "")
+            e_new_line = "," + remove_all_tone(e_line)
+            e_line += e_new_line
+            arr_line = e_line.split(",")
+            for e_token in arr_line:
+                tmp = arr_line
+                tmp.remove(e_token)
+                dict_sym[e_token] = tmp
+    return dict_sym
+
+
+def get_number_token_with_length(text, postion):
+    count = 0
+    for i in range(postion):
+        if text[i] == " ":
+            count += 1
+    return count
+
+
 def remove_all_tone(text):
     text = remove_accent(text)
     return text
@@ -25,22 +48,25 @@ def random_remove_tone(text, thresh_hold_active=0.3):
     return " ".join(n_arr_text)
 
 
-# TODO idea: check all the word in sent will have mask is exception and can't be delete
-def check_mask_word_in_list_exception_2_3(text, list_word_exception):
+def check_mask_word_in_list_exception(text, list_word_exception):
+    list_mask_exception = [0] * len(text.split(" "))
     for e_word_exception in list_word_exception:
         if e_word_exception in text:
-            pass
+            position = text.find(e_word_exception)
+            start_number_token = get_number_token_with_length(text, position)
+            end_number_token = start_number_token + len(e_word_exception.split(" "))
+            for i in range(start_number_token, end_number_token):
+                list_mask_exception[i] = 1
+    return list_mask_exception
 
 
-
-
-def random_delete_word(text, list_word_exception, thresh_hold_active=0.1):
-    arr_text = text.split()
+def random_delete_word(text, list_mask_exception, thresh_hold_active=0.1):
+    arr_text = text.split(" ")
     n_arr_text = []
 
-    for e_token in arr_text:
+    for idx, e_token in enumerate(arr_text):
         prob = random.random()
-        if prob < thresh_hold_active and e_token not in list_word_exception:
+        if prob < thresh_hold_active and list_mask_exception[idx] != 1:
             pass
         else:
             n_arr_text.append(e_token)
@@ -127,21 +153,23 @@ def process_augment_data_hate_speech(text,
                                      n_augment_per_sent=2):
 
     list_word_exception = get_list_from_file(path_exception_list)
+    list_mask_exception = check_mask_word_in_list_exception(text, list_word_exception)
+
     dict_synonym = get_dict_synonym(path_synonym)
     list_sent_augment = []
 
-    text_delete_word = random_delete_word(text, list_word_exception)
-    list_sent_augment.append(text_delete_word)
-
-    text_random_change_synonym_word = random_change_synonym_word(text, dict_synonym, thresh_hold_active=0.3)
-    list_sent_augment.append(text_random_change_synonym_word)
-
     for i in range(n_augment_per_sent):
+        text_delete_word = random_delete_word(text, list_mask_exception, thresh_hold_active=0.3)
+        list_sent_augment.append(text_delete_word)
+
+        text_random_change_synonym_word = random_change_synonym_word(text, dict_synonym, thresh_hold_active=0.5)
+        list_sent_augment.append(text_random_change_synonym_word)
+
         prob = random.random()
         if prob < 0.5:
-            text = random_delete_word(text, list_word_exception, thresh_hold_active=0.2)
+            text = random_delete_word(text, list_mask_exception, thresh_hold_active=0.3)
         if prob < 0.5:
-            text = random_change_synonym_word(text, dict_synonym, thresh_hold_active=0.2)
+            text = random_change_synonym_word(text, dict_synonym, thresh_hold_active=0.5)
 
         list_sent_augment.append(text)
 
@@ -157,6 +185,6 @@ if __name__ == '__main__':
     path_2 = "../dataset/support_data/dict_synonym.csv"
     # lt = process_augment_data(text, path_2)
     # print(lt)
-    lt = process_augment_data_hate_speech("cái ảnh cà khịa vl :)", path_1, path_2)
+    lt = process_augment_data_hate_speech("bố mày đéo thích đấy dmm", path_1, path_2, n_augment_per_sent=5)
     print(lt)
 

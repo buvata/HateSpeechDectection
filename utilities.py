@@ -20,19 +20,6 @@ def get_list_from_file(path_word_list):
     return list_word
 
 
-def get_dict_synonym(path_file_dict):
-    dict_sym = {}
-    with open(path_file_dict, "r") as rf:
-        for e_line in rf.readlines():
-            e_line = e_line.replace(", ", ",").replace("\n", "")
-            arr_line = e_line.split(",")
-            for e_token in arr_line:
-                tmp = arr_line
-                tmp.remove(e_token)
-                dict_sym[e_token] = tmp
-    return dict_sym
-
-
 def load_config(path_file_config):
     with open(path_file_config, "r") as rf:
         cf = json.load(rf)

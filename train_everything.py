@@ -108,10 +108,42 @@
 # b = handle_text_hate_speech(a, is_lower=True)
 # print(b)
 
-a = ["1", "2", '3']
-print(a)
-a.remove("1")
-print(a)
+# a = ["1", "2", '3']
+# print(a)
+# a.remove("1")
+# print(a)
+#
+#
+#
+# a = "trang la ta day nhe"
+# print(a.find("la ta"))
+# from sklearn.model_selection import StratifiedKFold
+#
+# a = ["trang", "la", "ta", "day","trang", "la", "ta", "day", "ta"]
+# b = [1,2,1,1,2, 2,1,2, 2]
+# kf = StratifiedKFold(n_splits=5, shuffle=True)
+# print(kf.get_n_splits(a, b))
+# for train_index, test_index in kf.split(a, b):
+#     print("start print")
+#     print(train_index)
+#     print(test_index)
+#     print("end print")
+# from module_dataset.preprocess_data.handle_text import *
+# a = "   trang la     ta day   . . dada "
+# print(remove_multi_space(a))
+# a = "hom nnay phai  la trang la ta  dauy"
+# b = "la"
+# print(a.find(b))
+# from module_dataset.preprocess_data.handle_data_augmentation import *
+# print(get_number_token_with_length(a, 15))
+# print(a.split(" "))
+a = "1, 2,3"
+b = "4"
+print(a + b)
+
+
+
+
 
 
 
