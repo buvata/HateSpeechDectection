@@ -54,6 +54,13 @@ def get_name_folder_file(path_file):
     return path_folder, name_file
 
 
+def get_data_from_index(list_data, list_index):
+    n_list_data = []
+    for e_index in list_index:
+        n_list_data.append(list_data[e_index])
+    return n_list_data
+
+
 if __name__ == '__main__':
     dict_sym = get_dict_synonym("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/dict_synonym.csv")
     print(dict_sym)
