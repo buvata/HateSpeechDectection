@@ -3,11 +3,12 @@ from module_train.ml_model.feature_extract import extract_feature
 from module_dataset.preprocess_data.handle_data_augmentation import *
 
 from sklearn.externals import joblib
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedKFold
 import pickle
 import os
 import pandas as pd
 from gensim.models import FastText
+from collections import Counter
 
 
 def get_data_contest(path_data, path_preprocess_data, path_label=None):
@@ -144,7 +145,7 @@ def make_data_with_augmentation(path_file_train_origin, path_file_train_augment,
                     wf.write(e_augment_text + "\n")
 
 
-def split_train_test(path_file_train, path_save_data, name_train, name_test, test_size=0.2):
+def split_train_test(path_file_train, path_save_data, name_train, name_test, n_splits=8):
     list_x_full = []
     list_y_full = []
 
@@ -154,22 +155,33 @@ def split_train_test(path_file_train, path_save_data, name_train, name_test, tes
             list_x_full.append(arr_line[0])
             list_y_full.append(arr_line[1])
 
-    x_train, x_test, y_train, y_test = train_test_split(list_x_full, list_y_full,
-                                                        test_size=test_size,
-                                                        stratify=list_y_full)
+    str_kfold = StratifiedKFold(n_splits=n_splits, shuffle=True)
 
-    path_data_train = os.path.join(path_save_data, name_train)
-    path_data_test = os.path.join(path_save_data, name_test)
+    count = 0
+    for train_index, test_index in str_kfold.split(list_x_full, list_y_full):
+        count += 1
+        x_train = get_data_from_index(list_x_full, train_index)
+        x_test = get_data_from_index(list_x_full, test_index)
+        y_train = get_data_from_index(list_y_full, train_index)
+        y_test = get_data_from_index(list_y_full, test_index)
 
-    with open(path_data_train, "w") as wf_train:
-        for i in range(len(x_train)):
-            line_write = "{}|{}\n".format(x_train[i], y_train[i])
-            wf_train.write(line_write)
+        print(Counter(y_train))
+        print(Counter(y_test))
 
-    with open(path_data_test, "w") as wf_test:
-        for i in range(len(x_test)):
-            line_write = "{}|{}\n".format(x_test[i], y_test[i])
-            wf_test.write(line_write)
+        tmp_train = "{}_{}".format(name_train, count)
+        tmp_test = "{}_{}".format(name_test, count)
+        path_data_train = os.path.join(path_save_data, tmp_train)
+        path_data_test = os.path.join(path_save_data, tmp_test)
+
+        with open(path_data_train, "w") as wf_train:
+            for i in range(len(x_train)):
+                line_write = "{}|{}\n".format(x_train[i], y_train[i])
+                wf_train.write(line_write)
+
+        with open(path_data_test, "w") as wf_test:
+            for i in range(len(x_test)):
+                line_write = "{}|{}\n".format(x_test[i], y_test[i])
+                wf_test.write(line_write)
 
 
 def make_dataset_for_ml(path_file_train_augment, path_save_pickle_data,
@@ -235,27 +247,6 @@ def making_exception_list_kw_from_synonym(cf):
 
 
 if __name__ == '__main__':
-    '''
-    path_file_train = "../dataset/raw_data/train_data.csv"
-    path_corpus = "../dataset/raw_data/corpus_data.csv"
-    # path_model_piece = "../dataset/support_data/model_piece"
-    # make_corpus_data(path_file_train, path_corpus)
-    # build_sentence_piece(path_corpus, path_model_piece, 20000)
-
-    path_save_data = "../dataset/data_for_train/"
-    name_train = "exp_train.csv"
-    name_test = "exp_test.csv"
-
-    path_file_train_augment = "../dataset/data_for_train/exp_train.csv"
-    path_save_model_extract_ft = "../dataset/data_for_train/extract_ft.pkl"
-    path_save_pickle_data = "../../module_train/save_model/model_ml/data_ft.pkl"
-
-    split_train_test(path_file_train, path_save_data, name_train, name_test, test_size=0.2)
-
-    make_dataset_for_ml(path_file_train_augment, path_save_pickle_data,
-                        path_save_model_extract_ft=path_save_model_extract_ft, is_train=True)
-    '''
-
     # norm_data_format("../dataset/data_for_train/exp_augment_train.csv", "normal.csv")
 
     # path_file_train_origin = "../preprocess_data/normal.csv"
@@ -272,10 +263,11 @@ if __name__ == '__main__':
     path_label = cf['train_label']
     # get_data_contest(path_raw_data, path_preprocess_data, path_label)
     # handle_data_with_punc_emoji_space(path_preprocess_data, path_process_punct, is_train=False)
-    # split_train_test(cf['train_process_emoji_punct'],
-    #                  cf['path_folder_save_data_for_dl'],
-    #                  cf['name_train'],
-    #                  cf['name_test'])
+    split_train_test(cf['train_process_emoji_punct'],
+                     cf['path_folder_save_data_for_dl'],
+                     cf['name_train'],
+                     cf['name_test'],
+                     n_splits=8)
     # make_corpus_data(cf['test_process_emoji_punct'], cf['path_corpus_data'], is_train=False)
     # train_embedding_fasttext(cf)
-    making_exception_list_kw_from_synonym(cf)
+    # making_exception_list_kw_from_synonym(cf)
