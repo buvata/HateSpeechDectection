@@ -146,8 +146,6 @@ def load_data_lm_word_char(path_file_data,
         dict_return = {'iters': (train_iter),
                        'vocabs': (inputs_word.vocab, inputs_char.vocab, labels.vocab)}
        
-
-
     return dict_return
 
 
@@ -176,8 +174,6 @@ def load_data(path_file_data_train):
     for batch in train_iter.__iter__():
         print (batch.inputs_word)
         print(batch.static_feature)
-
-
 
 
 if __name__ == '__main__':

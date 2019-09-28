@@ -99,6 +99,7 @@ if __name__ == '__main__':
         "prefix_model": "model_lm_lstm_cnn",
         "log_file": "log_file_13.txt",
         "type_model": "cnn_classify",
+        "D_cnn": '1_D'
         "num_epochs": 50,
         "min_freq_word": 2,
         "min_freq_char": 2,
@@ -109,8 +110,10 @@ if __name__ == '__main__':
         'use_xavier_weight_init': True,
         'word_embedding_dim': 200,
         'char_embedding_dim': 64,
-        'filter_num': 15,
-        'kernel_sizes': [2, 3, 4],
+        'filter_num_word': 15,
+        'filter_num_char': 15,
+        'kernel_sizes_word': [2, 3, 4],
+        'kernel_sizes_char': [3,4]
         'dropout_cnn': 0.5,
         'dropout_ffw': 0.5,
         'learning_rate': 0.001,

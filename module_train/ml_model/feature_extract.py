@@ -3,8 +3,6 @@ import emoji
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
-
-
 from sklearn.preprocessing import StandardScaler
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -92,6 +90,8 @@ class NumEmojiFeature(BaseEstimator, TransformerMixin):
         return self
 
 
+    
+
 def extract_feature():
     clf = Pipeline([
             ('features', FeatureUnion([
@@ -116,7 +116,7 @@ def extract_feature():
                 ]))
             ], n_jobs=-1)),
         ])
-    return clf
+    return clf 
 
 
 if __name__ == '__main__':
