@@ -137,13 +137,32 @@
 # from module_dataset.preprocess_data.handle_data_augmentation import *
 # print(get_number_token_with_length(a, 15))
 # print(a.split(" "))
+from collections import defaultdict
 a = "1, 2,3"
 b = "4"
 print(a + b)
+a = [1,2,0,1,2,1]
 
+b = [1,2,0,1,1,2]
+# list_true = [0] * 3
+# list_total_each_value = [0] * 3
+# for idx, value_b in enumerate(b):
+#     list_total_each_value[a[idx]] += 1
+#     if value_b == a[idx]:
+#         list_true[value_b] += 1
+#
+# print(list_true)
+# print(list_total_each_value)
 
-
-
+list_true = [0,3,4]
+list_total = [2,5,6]
+a = "_".join(str(x) for x in list_total)
+print(a)
+# print(l_new_total))
+# from operator import add
+# # print(list_true + list_total)
+# list_true = list(map(add, list_true, list_total))
+# print(list_true)
 
 
 

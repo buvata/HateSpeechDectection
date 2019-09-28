@@ -35,7 +35,7 @@ def train_model_dl(cf_common, cf_model):
         else:
             data_test_iter = None
 
-        model = CNNClassifyWordCharNgram.create(cf_common['path_save_model']+cf_common['type_model'],
+        model = CNNClassifyWordCharNgram.create(cf_common['path_save_model'] + cf_common['type_model'],
                                                 cf_model,
                                                 data['vocabs'])
 
@@ -53,7 +53,7 @@ def train_model_dl(cf_common, cf_model):
         else:
             data_test_iter = None
 
-        model = LSTMCNNWordCharLM.create(cf_common['path_save_model']+cf_common['type_model'],
+        model = LSTMCNNWordCharLM.create(cf_common['path_save_model'] + cf_common['type_model'],
                                          cf_model,
                                          data['vocabs'])
 
@@ -71,15 +71,17 @@ def train_model_dl(cf_common, cf_model):
         else:
             data_test_iter = None
 
-        model = LSTMCNNWordCharBase.create(cf_common['path_save_model']+cf_common['type_model'],
+        model = LSTMCNNWordCharBase.create(cf_common['path_save_model'] + cf_common['type_model'],
                                            cf_model,
                                            data['vocabs'])
 
+    print("!!Load dataset done !!\n")
     trainer = Trainer(cf_common['path_save_model']+cf_common['type_model'],
                       model,
                       cf_model,
                       cf_common['prefix_model'],
                       cf_common['log_file'],
+                      len(data['vocabs'][2]),
                       data_train_iter,
                       data_test_iter)
 
@@ -94,12 +96,12 @@ def train_ml(path_save_model, path_data, name_train, name_test=None):
 if __name__ == '__main__':
     cf_common = {
         "path_save_model": "save_model/",
-        "path_data": "../module_dataset/dataset/data_for_train/dl/",
-        "path_data_train": "train_dl.csv",
-        "path_data_test": "validation_dl.csv",
+        "path_data": "../module_dataset/dataset/data_for_train/dl/data_k_fold_stratify/",
+        "path_data_train": "train_dl_1",
+        "path_data_test": "validation_dl_1",
         "prefix_model": "model_cnn",
         "log_file": "log_file_train_cnn.txt",
-        "type_model": "cnn_classify",
+        "type_model": "lstm_cnn_word_char_base",
         "num_epochs": 50,
         "min_freq_word": 5,
         "min_freq_char": 5,
@@ -159,5 +161,5 @@ if __name__ == '__main__':
     elif cf_common['type_model'] == 'lstm_cnn_word_char_base':
         train_model_dl(cf_common, cf_model_char_base)
 
-    else:
+    elif cf_common['type_model'] == "lstm_cnn_lm":
         train_model_dl(cf_common, cf_model_lstm_cnn_lm)

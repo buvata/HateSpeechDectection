@@ -95,11 +95,26 @@ class CNNClassifyWordCharNgram(nn.Module):
         logits = self.label(output_ft)
 
         loss = F.cross_entropy(logits, target)
-        predict_value = torch.max(logits, 1)[1]
-        correct = predict_value.eq(target.view_as(predict_value)).sum().item()
-        total_sample = target.shape[0]
 
-        return loss, correct, total_sample
+        predict_value = torch.max(logits, 1)[1]
+        list_predict = predict_value.cpu().numpy().tolist()
+        list_target = target.cpu().numpy().tolist()
+
+        list_true, list_total = self.get_correct_total_each_class(list_predict, list_target)
+
+        return loss, list_true, list_total
+
+    def get_correct_total_each_class(self, list_predict_value, list_target_output):
+        list_true = [0] * self.output_size
+        list_total = [0] * self.output_size
+
+        for idx, value_predict in enumerate(list_predict_value):
+            list_total[list_target_output[idx]] += 1
+
+            if value_predict == list_target_output[idx]:
+                list_true[value_predict] += 1
+
+        return list_true, list_total
 
     @classmethod
     def create(cls, path_folder_model, cf, vocabs):

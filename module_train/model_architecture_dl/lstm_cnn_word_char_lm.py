@@ -22,6 +22,7 @@ class LSTMCNNWordCharLM(nn.Module):
         vocab_word, vocab_char, vocab_label = vocabs
         self.cf = cf
         self.vocabs = vocabs
+        self.output_size = len(vocab_label)
 
         self.word_embedding_dim = cf['word_embedding_dim']
         self.hidden_size_word = cf['hidden_size_word']
@@ -71,9 +72,9 @@ class LSTMCNNWordCharLM(nn.Module):
         self.hidden_size_reduce = cf['hidden_size_reduce']
         if self.hidden_size_reduce > 0:
             self.ffw_layer = nn.Linear(self.output_final, self.hidden_size_reduce)
-            self.label = nn.Linear(self.hidden_size_reduce, len(vocab_label))
+            self.label = nn.Linear(self.hidden_size_reduce, self.output_size)
         else:
-            self.label = nn.Linear(self.hidden_size_word + self.hidden_size_char, len(vocab_label))
+            self.label = nn.Linear(self.hidden_size_word + self.hidden_size_char, self.output_size)
 
     @staticmethod
     def attention_net(network_output, final_state):
@@ -126,10 +127,25 @@ class LSTMCNNWordCharLM(nn.Module):
         loss = F.cross_entropy(output_predictions, target)
 
         predict_value = torch.max(output_predictions, 1)[1]
-        correct = predict_value.eq(target.view_as(predict_value)).sum().item()
-        total_sample = target.shape[0]
 
-        return loss, correct, total_sample
+        list_predict = predict_value.cpu().numpy().tolist()
+        list_target = target.cpu().numpy().tolist()
+
+        list_true, list_total = self.get_correct_total_each_class(list_predict, list_target)
+
+        return loss, list_true, list_total
+
+    def get_correct_total_each_class(self, list_predict_value, list_target_output):
+        list_true = [0] * self.output_size
+        list_total = [0] * self.output_size
+
+        for idx, value_predict in enumerate(list_predict_value):
+            list_total[list_target_output[idx]] += 1
+
+            if value_predict == list_target_output[idx]:
+                list_true[value_predict] += 1
+
+        return list_true, list_total
 
     @classmethod
     def create(cls, path_folder_model, cf, vocabs):
