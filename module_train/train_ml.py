@@ -11,17 +11,16 @@ import os
 
 
 def train_using_each_ml(model, params, path_save_model, name_model, path_data, name_train, name_test=None):
+    
     dict_result = {}
     path_file_train = os.path.join(path_data, name_train)
     x_train, y_train = load_data_ml(path_file_train)
-    print(y_train)
-
 
     if name_test is not None:
         path_file_test = os.path.join(path_data, name_test)
         x_test, y_test = load_data_ml(path_file_test)
 
-    grid_search = GridSearchCV(model, param_grid=params, n_jobs=-1, cv=5, verbose=1)
+    grid_search = GridSearchCV(model, param_grid=params, n_jobs=-1, cv=1, verbose=1)
 
     grid_search.fit(x_train, y_train)
 
@@ -88,7 +87,7 @@ def load_model_ml(path_save_model):
 
 
 if __name__ == "__main__":
-    path_save_model = "../module_train/save_model/model_ml"
-    path_data = "../module_train/save_model/model_ml"
-    name_train = "data_ft.pkl"
+    path_save_model = "/home/taibk/Documents/Code_ML/HateSpeechDectection/module_train/save_model/model_ml"
+    path_data = "/home/taibk/Documents/Code_ML/HateSpeechDectection/module_train/save_model/model_ml"
+    name_train = "data_train_ft.pkl"
     train_all_ml_model(path_save_model, path_data, name_train, name_test=None)
