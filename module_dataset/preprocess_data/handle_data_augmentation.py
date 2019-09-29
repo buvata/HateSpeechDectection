@@ -1,10 +1,12 @@
-import nltk
+import string
 import time
 import random
 from random import shuffle
 from module_dataset.preprocess_data.handle_text import *
 from textblob import TextBlob
 from utilities import *
+
+list_alphabet = list(string.ascii_lowercase)
 
 
 def get_dict_synonym(path_file_dict):
@@ -15,10 +17,33 @@ def get_dict_synonym(path_file_dict):
             e_new_line = "," + remove_all_tone(e_line)
             e_line += e_new_line
             arr_line = e_line.split(",")
+
+            # use for replace sure key wrap by space
+            # tmp = []
+            # for e_token in arr_line:
+            #     tmp.append(" {} ".format(e_token))
+            # make array like capitalize
+            arr_line_capitalize = []
             for e_token in arr_line:
-                tmp = arr_line
-                tmp.remove(e_token)
-                dict_sym[e_token] = tmp
+                arr_line_capitalize.append(e_token.capitalize())
+
+            for e_token_1 in arr_line:
+                n_tmp = arr_line.copy()
+                n_tmp.remove(e_token_1)
+                for e_token_sub_1 in n_tmp:
+                    print(e_token_sub_1)
+                    if " " == e_token_sub_1[0]:
+                        n_tmp.remove(e_token_sub_1)
+                dict_sym[e_token_1] = n_tmp
+
+            for e_token_2 in arr_line_capitalize:
+                n_tmp_capitalize = arr_line_capitalize.copy()
+                n_tmp_capitalize.remove(e_token_2)
+                for e_token_sub_2 in n_tmp_capitalize:
+                    if " " == e_token_sub_2[0]:
+                        n_tmp_capitalize.remove(e_token_sub_2)
+                dict_sym[e_token_2] = n_tmp_capitalize
+
     return dict_sym
 
 
@@ -49,6 +74,7 @@ def random_remove_tone(text, thresh_hold_active=0.3):
 
 
 def check_mask_word_in_list_exception(text, list_word_exception):
+    text = text.lower()
     list_mask_exception = [0] * len(text.split(" "))
     for e_word_exception in list_word_exception:
         if e_word_exception in text:
@@ -75,13 +101,49 @@ def random_delete_word(text, list_mask_exception, thresh_hold_active=0.1):
 
 
 def random_change_synonym_word(text, dict_word_synonym, thresh_hold_active=0.2):
-
+    list_value_must_skip = []
     for e_key, e_value in dict_word_synonym.items():
         prob = random.random()
-        if e_key in text and prob < thresh_hold_active:
+        if e_key in text and prob < thresh_hold_active and e_key not in list_value_must_skip:
             shuffle(e_value)
+            print(e_value)
             text = text.replace(e_key, e_value[0])
+            list_value_must_skip += e_value.copy()
     return text
+
+
+def random_remove_insert_character(text, thresh_hold_active_char=0.15):
+    if len(text) < 3:
+        return text
+
+    n_text = []
+    count_augment = 0
+    for e_character in text:
+        prob = random.random()
+        if prob < thresh_hold_active_char and count_augment <= 1:
+            count_augment += 1
+            pass
+        else:
+            n_text.append(e_character)
+
+        if prob / thresh_hold_active_char < 0.1 and count_augment <= 1:
+            n_text.append(e_character)
+            shuffle(list_alphabet)
+            n_text.append(list_alphabet[0])
+            count_augment += 1
+
+    return "".join(n_text)
+
+
+def random_make_new_word_by_character(text, thresh_hold_active=0.2):
+    arr_text = text.split(" ")
+    n_arr_text = []
+    for e_token in arr_text:
+        prob = random.random()
+        if prob < thresh_hold_active:
+            e_token = random_remove_insert_character(e_token, thresh_hold_active_char=0.1)
+        n_arr_text.append(e_token)
+    return " ".join(n_arr_text)
 
 
 def back_translate_data(text):
@@ -101,91 +163,59 @@ def back_translate_data(text):
     return str(str_vn_back_translate)
 
 
-def process_augment_data(text,
-                         path_dict_synonym,
-                         n_augment_per_sent=5):
-
-    dict_synonym = get_dict_synonym(path_dict_synonym)
-
-    list_word_exception = []
-    for e_key, e_value in dict_synonym.items():
-        list_word_exception.append(e_key)
-        for e_word in list(e_value):
-            list_word_exception.append(e_word)
-
+def process_augment_hate_data(text,
+                              path_exception_list,
+                              path_synonym,
+                              n_augment_per_sent=2):
     list_text_augment = []
+
+    list_word_exception = get_list_from_file(path_exception_list)
+    dict_synonym = get_dict_synonym(path_synonym)
 
     text_remove_all_tone = remove_all_tone(text)
     list_text_augment.append(text_remove_all_tone)
 
-    text_del_word = random_delete_word(text, list_word_exception)
-    list_text_augment.append(text_del_word)
-
     text_remove_tone = random_remove_tone(text)
     list_text_augment.append(text_remove_tone)
 
-    text_change_synonym = random_change_synonym_word(text, dict_synonym)
-    list_text_augment.append(text_change_synonym)
+    text_random_change_synonym_word = random_change_synonym_word(text, dict_synonym, thresh_hold_active=0.5)
+    list_text_augment.append(text_random_change_synonym_word)
 
     for i in range(n_augment_per_sent):
-        prob = random.random()
-
-        text_process = text
-        if prob < 0.15:
-            text_process = random_delete_word(text_process, list_word_exception)
 
         prob = random.random()
-        if prob < 0.15:
-            text_process = random_remove_tone(text_process, thresh_hold_active=0.1)
+        if prob < 0.8:
+            text = random_change_synonym_word(text, dict_synonym, thresh_hold_active=1)
+
+        prob = random.random()
+        if prob < 0.2:
+            list_mask_exception_after_change_synonym = check_mask_word_in_list_exception(text, list_word_exception)
+            text = random_delete_word(text, list_mask_exception_after_change_synonym, thresh_hold_active=0.2)
 
         prob = random.random()
         if prob < 0.15:
-            text_process = random_change_synonym_word(text_process, dict_synonym, thresh_hold_active=0.15)
+            text = random_remove_tone(text, thresh_hold_active=0.15)
 
-        list_text_augment.append(text_process)
+        prob = random.random()
+        if prob < 0.1:
+            text = random_make_new_word_by_character(text, thresh_hold_active=0.08)
+
+        list_text_augment.append(text)
 
     return list(set(list_text_augment))
 
 
-def process_augment_data_hate_speech(text,
-                                     path_exception_list,
-                                     path_synonym,
-                                     n_duplicate_sent=2,
-                                     n_augment_per_sent=2):
-
-    list_word_exception = get_list_from_file(path_exception_list)
-    list_mask_exception = check_mask_word_in_list_exception(text, list_word_exception)
-
-    dict_synonym = get_dict_synonym(path_synonym)
-    list_sent_augment = []
-
-    for i in range(n_augment_per_sent):
-        text_delete_word = random_delete_word(text, list_mask_exception, thresh_hold_active=0.3)
-        list_sent_augment.append(text_delete_word)
-
-        text_random_change_synonym_word = random_change_synonym_word(text, dict_synonym, thresh_hold_active=0.5)
-        list_sent_augment.append(text_random_change_synonym_word)
-
-        prob = random.random()
-        if prob < 0.5:
-            text = random_delete_word(text, list_mask_exception, thresh_hold_active=0.3)
-        if prob < 0.5:
-            text = random_change_synonym_word(text, dict_synonym, thresh_hold_active=0.5)
-
-        list_sent_augment.append(text)
-
-    list_sent_augment = list(set(list_sent_augment))
-    list_sent_augment += [text] * n_duplicate_sent
-    return list_sent_augment
-
-
 if __name__ == '__main__':
-    text = "kiểu dáng đẹp nhưng chất lượng và cách may quá không được thời gian giao hàng rất nhanh"
+    text = " đéo biết tnao cho đúng nữa"
     # print(back_translate_data(text))
     path_1 = "../dataset/support_data/exception_word.csv"
     path_2 = "../dataset/support_data/dict_synonym.csv"
-    # lt = process_augment_data(text, path_2)
+    # lt = process_augment_hate_data(text, path_1, path_2)
     # print(lt)
-    lt = process_augment_data_hate_speech("bố mày đéo thích đấy dmm", path_1, path_2, n_augment_per_sent=5)
-    print(lt)
+    dict_synonym = get_dict_synonym(path_2)
+    print(dict_synonym)
+    for i in range(10):
+        a = random_change_synonym_word(text, dict_synonym, thresh_hold_active=1)
+        print(a)
+
 

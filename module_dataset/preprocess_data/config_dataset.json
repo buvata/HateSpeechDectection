@@ -10,8 +10,8 @@
 
   "path_offensive_data": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/offensive_data.csv",
   "path_hate_data": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/hate_data.csv",
-  "path_offensive_augment": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/offensive_augment_data.csv",
-  "path_hate_augment": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/hate_augment_data.csv",
+  "path_offensive_augment": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/offensive_augment_data_word.csv",
+  "path_hate_augment": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/hate_augment_data_tone_word.csv",
 
   "path_corpus_data": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/corpus_data_train_test.csv",
   "path_save_embedding": "",

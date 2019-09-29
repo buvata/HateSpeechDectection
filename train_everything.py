@@ -165,10 +165,27 @@ from collections import defaultdict
 # print(list_true)
 
 from module_dataset.preprocess_data.handle_data_augmentation import *
-a = "Thưởng nóng cho anh em nào biết con chó này . Địt cái lồn mẹ nhà mày mày bảo đăng bậy thì ra đây gặp bố . Bố nhét cứt vào mồm mày luôn . <URL>"
-ab = back_translate_data(a)
-print(type(ab))
-print(ab)
-print(str(ab))
-print(type(str(ab)))
+# a = "Thưởng nóng cho anh em nào biết con chó này . Địt cái lồn mẹ nhà mày mày bảo đăng bậy thì ra đây gặp bố . Bố nhét cứt vào mồm mày luôn . <URL>"
+# ab = back_translate_data(a)
+# print(type(ab))
+# print(ab)
+# print(str(ab))
+# print(type(str(ab)))
+# import string
+# a = list(string.ascii_lowercase)
+# shuffle(a)
+# print(a[0])
+# print(random_remove_insert_character("trang", thresh_hold_active_char=0.5))
+#
+# l_a = ["mai", "hung", "trang"]
+# dict_sym = {}
+# for e_token in l_a:
+#     n_tmp = l_a.copy()
+#     print(n_tmp)
+#     n_tmp.remove(e_token)
+#     dict_sym[e_token] = n_tmp
+#
+# print(dict_sym)
+a = "trang la ta"
+print(a.capitalize())
 

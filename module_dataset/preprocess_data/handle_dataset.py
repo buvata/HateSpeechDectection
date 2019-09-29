@@ -134,20 +134,24 @@ def make_data_with_back_translate(path_file_text, path_file_augment):
                 wf.write("{}|{}\n".format(id_data, n_e_line))
 
 
-def make_data_with_augmentation(path_file_train_origin, path_file_train_augment,
-                                path_dict_synonym,
-                                n_augment_per_sent=10):
+def make_data_with_augmentation(path_file_train_origin,
+                                        path_file_train_augment,
+                                        path_exception_list,
+                                        path_dict_synonym,
+                                        n_augment_per_sent=10):
 
-    with open(path_file_train_augment, 'a') as wf:
+    with open(path_file_train_augment, 'w') as wf:
         with open(path_file_train_origin, 'r') as rf:
             for e_line in rf.readlines():
-                e_line = e_line.replace("\n", "")
-                list_augment_text = process_augment_data(e_line,
-                                                         path_dict_synonym,
-                                                         n_augment_per_sent)
-
+                arr_line = e_line.replace("\n", "").split("|")
+                list_augment_text = process_augment_hate_data(arr_line[1],
+                                                              path_exception_list,
+                                                              path_dict_synonym,
+                                                              n_augment_per_sent)
+                id_text = arr_line[0]
                 for e_augment_text in list_augment_text:
-                    wf.write(e_augment_text + "\n")
+                    line_write = "{}|{}\n".format(id_text, e_augment_text)
+                    wf.write(line_write)
 
 
 def split_train_test(path_file_train, path_save_data, name_train, name_test, n_splits=8):
@@ -276,13 +280,28 @@ if __name__ == '__main__':
     # make_corpus_data(cf['test_process_emoji_punct'], cf['path_corpus_data'], is_train=False)
     # train_embedding_fasttext(cf)
     # making_exception_list_kw_from_synonym(cf)
+    #
+    path_exception_list = cf['path_exception_word']
+    path_dict_synonym = cf['path_synonym']
     path_text_hate = cf['path_hate_data']
     path_text_hate_translate = cf['path_hate_augment']
-    make_data_with_back_translate(path_text_hate, path_text_hate_translate)
+    make_data_with_augmentation(path_text_hate,
+                                        path_text_hate_translate,
+                                        path_exception_list,
+                                        path_dict_synonym,
+                                        n_augment_per_sent=5)
 
-    import time
-    time.sleep(300)
+    # import time
+    # time.sleep(300)
 
     path_text_offensive = cf['path_offensive_data']
     path_text_offensive_translate = cf['path_offensive_augment']
-    make_data_with_back_translate(path_text_offensive, path_text_offensive_translate)
+    # make_data_with_back_translate(path_text_offensive, path_text_offensive_translate)
+    make_data_with_augmentation(path_text_offensive,
+                                        path_text_offensive_translate,
+                                        path_exception_list,
+                                        path_dict_synonym,
+                                        n_augment_per_sent=5)
+#TODO: need make corpus with all augmentation data from offensive, hate, normal
+#TODO: split data 8-fold and write function make augmentation each fold with hate offensive
+# file generate with augmentation before.
