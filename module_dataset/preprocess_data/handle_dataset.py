@@ -11,7 +11,7 @@ from gensim.models import FastText
 from collections import Counter
 
 
-def get_data_contest(path_data, path_preprocess_data, path_label=None):
+def get_data_contest(path_data, path_preprocess_data, path_process_emoji, path_label=None):
 
     a = []
     l_full_sample = []
@@ -51,9 +51,16 @@ def get_data_contest(path_data, path_preprocess_data, path_label=None):
             if path_label is None:
                 line_write_file = "{}|{}\n".format(id_data, data)
             else:
-                line_write_file = "{}|{}\n".format(data, dict_label_id[id_data])
+                line_write_file = "{}|{}|{}\n".format(id_data, data, dict_label_id[id_data])
             print(line_write_file)
             wf.write(line_write_file)
+
+    if path_label is not None:
+        is_train = True
+    else:
+        is_train = False
+
+    handle_data_with_punc_emoji_space(path_preprocess_data, path_process_emoji, is_train)
 
 
 def handle_data_with_punc_emoji_space(path_data_process_raw, path_data_after_process, is_train=True):
@@ -62,10 +69,11 @@ def handle_data_with_punc_emoji_space(path_data_process_raw, path_data_after_pro
             for e_line in rf.readlines():
                 e_line = e_line.replace("\n", "").split("|")
                 if is_train:
-                    text = e_line[0]
-                    id_data = e_line[1]
+                    id_data = e_line[0]
+                    text = e_line[1]
+                    label = e_line[2]
                     text = handle_text_hate_speech(text)
-                    line_write = "{}|{}\n".format(text, id_data)
+                    line_write = "{}|{}|{}\n".format(id_data, text, label)
                 else:
                     id_data = e_line[0]
                     text = e_line[1]
@@ -85,20 +93,6 @@ def make_corpus_data(path_file_train, path_corpus, is_train=True):
                     text = e_line.split("|")[1].replace("\n", "")
 
                 wf.write(text + "\n")
-
-
-def norm_data_format(path_file_data, path_data_norm):
-    with open(path_data_norm, "w") as wf:
-        with open(path_file_data, "r") as rf:
-            for e_line in rf.readlines():
-                arr_line = e_line.split("|")
-                if len(arr_line) > 3:
-                    print("error")
-                    print(e_line)
-                text_data = arr_line[2].replace("\n", "")
-                label = arr_line[1]
-                line_write = "{}|{}\n".format(text_data, label)
-                wf.write(line_write)
 
 
 def build_sentence_piece(path_corpus, path_save_model, vocab_size, shuffle_input_sentence='true'):
@@ -127,6 +121,17 @@ def convert_data_with_piece(path_file_data_origin, path_file_data_piece, path_mo
                 text = norm_text_with_sub_word(text, s)
 
                 wf.write(text + "|" + label + "\n")
+
+
+def make_data_with_back_translate(path_file_text, path_file_augment):
+    with open(path_file_augment, "a") as wf:
+        with open(path_file_text, "r") as rf:
+            for e_line in rf.readlines():
+                e_line = e_line.replace("\n", "")
+                id_data = e_line.split("|")[0]
+                text_data = e_line.split("|")[1]
+                n_e_line = back_translate_data(text_data)
+                wf.write("{}|{}\n".format(id_data, n_e_line))
 
 
 def make_data_with_augmentation(path_file_train_origin, path_file_train_augment,
@@ -258,16 +263,26 @@ if __name__ == '__main__':
     path_cf = "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/preprocess_data/config_dataset.json"
     cf = load_config(path_cf)
     path_raw_data = cf['train_raw_text']
-    path_preprocess_data = cf['test_preprocess_text']
-    path_process_punct = cf['test_process_emoji_punct']
+    path_preprocess_data = cf['train_preprocess_text']
+    path_process_punct = cf['train_process_emoji_punct']
     path_label = cf['train_label']
-    # get_data_contest(path_raw_data, path_preprocess_data, path_label)
+    # get_data_contest(path_raw_data, path_preprocess_data, path_process_punct, path_label)
     # handle_data_with_punc_emoji_space(path_preprocess_data, path_process_punct, is_train=False)
-    split_train_test(cf['train_process_emoji_punct'],
-                     cf['path_folder_save_data_for_dl'],
-                     cf['name_train'],
-                     cf['name_test'],
-                     n_splits=8)
+    # split_train_test(cf['train_process_emoji_punct'],
+    #                  cf['path_folder_save_data_for_dl'],
+    #                  cf['name_train'],
+    #                  cf['name_    id_data = e_line[0]test'],
+    #                  n_splits=8)
     # make_corpus_data(cf['test_process_emoji_punct'], cf['path_corpus_data'], is_train=False)
     # train_embedding_fasttext(cf)
     # making_exception_list_kw_from_synonym(cf)
+    path_text_hate = cf['path_hate_data']
+    path_text_hate_translate = cf['path_hate_augment']
+    make_data_with_back_translate(path_text_hate, path_text_hate_translate)
+
+    import time
+    time.sleep(300)
+
+    path_text_offensive = cf['path_offensive_data']
+    path_text_offensive_translate = cf['path_offensive_augment']
+    make_data_with_back_translate(path_text_offensive, path_text_offensive_translate)

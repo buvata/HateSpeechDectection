@@ -6,9 +6,6 @@ from module_dataset.preprocess_data.hanlde_dataloader import *
 from module_train.train_dl import Trainer
 from module_train.train_ml import *
 
-from module_evaluate import reference_model
-from module_evaluate import evaluate
-
 
 def train_model_dl(cf_common, cf_model):
     path_data = cf_common['path_data']
@@ -101,7 +98,7 @@ if __name__ == '__main__':
         "path_data_test": "validation_dl_1",
         "prefix_model": "model_cnn",
         "log_file": "log_file_train_cnn.txt",
-        "type_model": "lstm_cnn_word_char_base",
+        "type_model": "lstm_cnn_lm",
         "num_epochs": 50,
         "min_freq_word": 5,
         "min_freq_char": 5,
@@ -147,6 +144,7 @@ if __name__ == '__main__':
         'use_last_as_ft': True,
         'hidden_size_reduce': 256,
         'use_char_cnn': True,
+        'D_cnn': '1_D',
         'char_cnn_filter_num': 15,
         'char_window_size': [2, 3],
         'dropout_cnn': 0.5,

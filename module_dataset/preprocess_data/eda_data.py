@@ -28,12 +28,14 @@ def get_data_type_1_2(path_dataset, path_offensive, path_hate):
     with open(path_dataset, "r") as rf:
         for e_line in rf.readlines():
             e_line = e_line.replace("\n", "")
-            text_data = e_line.split("|")[0]
-            label = int(e_line.split("|")[1])
+            arr_line = e_line.split("|")
+            id_data = arr_line[0]
+            text_data = arr_line[1]
+            label = int(arr_line[2])
             if label == 1:
-                w_offensive.write(text_data + "\n")
+                w_offensive.write(id_data + "|" + text_data + "\n")
             if label == 2:
-                w_hate.write(text_data + "\n")
+                w_hate.write(id_data + "|" + text_data + "\n")
 
     w_offensive.close()
     w_hate.close()
@@ -43,7 +45,7 @@ if __name__ == '__main__':
     path_config = "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/preprocess_data/" \
                   "config_dataset.json"
     cf = load_config(path_config)
-    get_important_kw(cf['train_process_emoji_punct'], cf['path_save_important_kw'], 200)
-    # get_data_type_1_2(cf['train_process_emoji_punct'],
-    #                   cf['path_offensive_data'],
-    #                   cf['path_hate_data'])
+    # get_important_kw(cf['train_process_emoji_punct'], cf['path_save_important_kw'], 200)
+    get_data_type_1_2(cf['train_process_emoji_punct'],
+                      cf['path_offensive_data'],
+                      cf['path_hate_data'])

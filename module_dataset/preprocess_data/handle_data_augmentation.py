@@ -86,18 +86,19 @@ def random_change_synonym_word(text, dict_word_synonym, thresh_hold_active=0.2):
 
 def back_translate_data(text):
     try:
-        nltk.set_proxy('http://s5.cyberspace.vn:3128')
+        # nltk.set_proxy('http://s5.cyberspace.vn:3128')
         blob = TextBlob(text)
         str_en_translate = blob.translate(from_lang='vi', to='en')
         time.sleep(1)
 
         n_blob = TextBlob(str(str_en_translate))
         str_vn_back_translate = n_blob.translate(from_lang='en', to='vi')
+        print(str_vn_back_translate)
         time.sleep(1)
     except:
         return None
 
-    return str_vn_back_translate
+    return str(str_vn_back_translate)
 
 
 def process_augment_data(text,
