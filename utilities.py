@@ -1,5 +1,6 @@
 import json
 import glob
+from collections import defaultdict
 
 
 def get_dict_typing_error(path_file_dict):
@@ -48,7 +49,20 @@ def get_data_from_index(list_data, list_index):
     return n_list_data
 
 
-if __name__ == '__main__':
-    dict_sym = get_dict_synonym("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/dict_synonym.csv")
-    print(dict_sym)
+def get_dict_augment_data(path_file):
+    dict_augment_data = defaultdict(list)
 
+    with open(path_file, "r") as rf:
+        for e_line in rf.readlines():
+            arr_line = e_line.replace("\n", "").split("|")
+            id_text = arr_line[0]
+            text_data = arr_line[1]
+            dict_augment_data[id_text].append(text_data)
+
+    return dict_augment_data
+
+
+
+if __name__ == '__main__':
+    path_hate = "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/hate_augment_data_tone_word.csv"
+    get_dict_augment_data(path_hate)

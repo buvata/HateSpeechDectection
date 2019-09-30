@@ -4,6 +4,7 @@ import torch.optim as optim
 
 import os
 from operator import add
+from sklearn.metrics import f1_score
 
 
 class Trainer(object):
@@ -31,8 +32,8 @@ class Trainer(object):
                 # train phase
                 self.train_iter.init_epoch()
                 epoch_loss = 0
-                l_total_correct = [0] * self.size_label
-                l_total_sample = [0] * self.size_label
+                l_total_predict = []
+                l_total_target = []
                 count = 0
 
                 prog_iter = tqdm(self.train_iter, leave=False)
@@ -40,10 +41,10 @@ class Trainer(object):
                     self.model.train()
                     self.optimizer.zero_grad()
 
-                    loss, l_correct, l_sample = self.model.loss(batch)
+                    loss, l_predict, l_target = self.model.loss(batch)
 
-                    l_total_correct = list(map(add, l_total_correct, l_correct))
-                    l_total_sample = list(map(add, l_total_sample, l_sample))
+                    l_total_predict.extend(l_predict)
+                    l_total_target.extend(l_target)
 
                     loss.backward()
                     self.optimizer.step()
@@ -55,21 +56,29 @@ class Trainer(object):
 
                 total_loss = round(epoch_loss / count, 4)
 
-                output_train = {"loss": total_loss,
-                                "correct": "_".join(str(x) for x in l_total_correct),
-                                "total": "_".join(str(x) for x in l_total_sample)}
+                average_score_classes = f1_score(l_total_target, l_total_predict, average=None)
+                average_score_macro = round(f1_score(l_total_target, l_total_predict, average='macro'), 4)
 
-                name_model = "{}_epoch_{}_train_loss_{}_correct_{}_total{}".format(self.prefix_model,
+                string_macro_each_classes = ""
+                for f1_each_class in average_score_classes.tolist():
+                    string_macro_each_classes += "_" + str(round(f1_each_class, 2))
+
+                output_train = {"loss": total_loss,
+                                "average_macro": average_score_macro,
+                                "average_class": string_macro_each_classes
+                              }
+
+                name_model = "{}_epoch_{}_train_loss_{}_macro{}_full_{}".format(self.prefix_model,
                                                                                    epoch,
                                                                                    output_train['loss'],
-                                                                                   output_train['correct'],
-                                                                                   output_train['total'])
+                                                                                   output_train['average_macro'],
+                                                                                   output_train['average_class'])
                 if self.test_iter is not None:
                     output_test = self.evaluator(self.test_iter)
-                    name_model = "{}_test_loss_{}correct_{}_total_{}".format(name_model,
+                    name_model = "{}_test_loss_{}_macro{}_full_{}".format(name_model,
                                                                              output_test['loss'],
-                                                                             output_test['correct'],
-                                                                             output_test['total'])
+                                                                             output_test['average_macro'],
+                                                                             output_test['average_class'])
                 log_report = "\n" + name_model
                 print(log_report)
                 wf.write(log_report)
@@ -77,22 +86,33 @@ class Trainer(object):
                 self.model.save(self.path_save_model, name_model)
 
     def evaluator(self, test_iter):
-        l_total_correct = [0] * self.size_label
-        l_total_sample = [0] * self.size_label
+        l_total_predict = []
+        l_total_target = []
         total_loss = 0
         count = 0
         self.model.eval()
         with torch.no_grad():
             for batch in test_iter:
-                loss, l_correct, l_sample = self.model.loss(batch)
-                l_total_correct = list(map(add, l_total_correct, l_correct))
-                l_total_sample = list(map(add, l_total_sample, l_sample))
+                loss, l_predict, l_target = self.model.loss(batch)
+                l_total_predict.extend(l_predict)
+                l_total_target.extend(l_target)
+
                 total_loss += loss.item()
                 count += 1
 
         final_loss = round(total_loss / count, 4)
 
-        return {"loss": final_loss,
-                "correct": "_".join(str(x) for x in l_total_correct),
-                "total": "_".join(str(x) for x in l_total_sample)}
+        average_score_classes = f1_score(l_total_target, l_total_predict, average=None)
+        average_score_macro = round(f1_score(l_total_target, l_total_predict, average='macro'), 4)
+
+        string_macro_each_classes = ""
+        for f1_each_class in average_score_classes.tolist():
+            string_macro_each_classes += "_" + str(round(f1_each_class, 2))
+
+        output_test = {"loss": final_loss,
+                        "average_macro": average_score_macro,
+                        "average_class": string_macro_each_classes
+                       }
+
+        return output_test
 

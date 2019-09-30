@@ -1,0 +1,1 @@
+{"use_xavier_weight_init": true, "word_embedding_dim": 100, "char_embedding_dim": 64, "filter_num_word": 10, "filter_num_char": 10, "kernel_sizes_word": [2, 3, 4], "kernel_sizes_char": [2, 3, 4], "dropout_cnn": 0.5, "dropout_ffw": 0.5, "learning_rate": 0.001, "weight_decay": 0, "D_cnn": "1_D"}

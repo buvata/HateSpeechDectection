@@ -23,7 +23,9 @@ def train_model_dl(cf_common, cf_model):
                                       path_data_test,
                                       min_freq_word=cf_common['min_freq_word'],
                                       min_freq_char=cf_common['min_freq_char'],
-                                      batch_size=cf_common['batch_size'])
+                                      batch_size=cf_common['batch_size'],
+                                      cache_folder=cf_common['cache_folder'],
+                                      name_vocab=cf_common['name_vocab'])
 
         data_train_iter = data['iters'][0]
 
@@ -42,7 +44,9 @@ def train_model_dl(cf_common, cf_model):
                                       path_data_test,
                                       min_freq_word=cf_common['min_freq_word'],
                                       min_freq_char=cf_common['min_freq_char'],
-                                      batch_size=cf_common['batch_size'])
+                                      batch_size=cf_common['batch_size'],
+                                      cache_folder=cf_common['cache_folder'],
+                                      name_vocab=cf_common['name_vocab'])
 
         data_train_iter = data['iters'][0]
         if path_data_test is not None:
@@ -60,7 +64,9 @@ def train_model_dl(cf_common, cf_model):
                                         path_data_test,
                                         min_freq_word=cf_common['min_freq_word'],
                                         min_freq_char=cf_common['min_freq_char'],
-                                        batch_size=cf_common['batch_size'])
+                                        batch_size=cf_common['batch_size'],
+                                        cache_folder=cf_common['cache_folder'],
+                                        name_vocab=cf_common['name_vocab'])
 
         data_train_iter = data['iters'][0]
         if path_data_test is not None:
@@ -93,29 +99,33 @@ def train_ml(path_save_model, path_data, name_train, name_test=None):
 if __name__ == '__main__':
     cf_common = {
         "path_save_model": "save_model/",
-        "path_data": "../module_dataset/dataset/data_for_train/dl/data_k_fold_stratify/",
-        "path_data_train": "train_dl_1",
+        "path_data": "../module_dataset/dataset/data_for_train/dl/data_k_fold/",
+        "path_data_train": "train_dl_id_1_augment",
         "path_data_test": "validation_dl_1",
         "prefix_model": "model_cnn",
         "log_file": "log_file_train_cnn.txt",
-        "type_model": "lstm_cnn_lm",
+        "type_model": "cnn_classify",
         "num_epochs": 50,
-        "min_freq_word": 5,
+        "min_freq_word": 1,
         "min_freq_char": 5,
-        "batch_size": 32
+        "cache_folder": "../module_dataset/dataset/support_data",
+        "name_vocab": "social_embedding_100.txt",
+        "batch_size": 2
     }
 
     cf_model_cnn_classify = {
         'use_xavier_weight_init': True,
-        'word_embedding_dim': 300,
+        'word_embedding_dim': 100,
         'char_embedding_dim': 64,
-        'filter_num': 15,
-        'kernel_sizes': [2, 3, 4],
+        'filter_num_word': 10,
+        'filter_num_char': 10,
+        'kernel_sizes_word': [2, 3, 4],
+        'kernel_sizes_char': [2, 3, 4],
         'dropout_cnn': 0.5,
         'dropout_ffw': 0.5,
         'learning_rate': 0.001,
         'weight_decay': 0,
-        'D_cnn': "2_D"
+        'D_cnn': "1_D"
     }
 
     cf_model_char_base = {

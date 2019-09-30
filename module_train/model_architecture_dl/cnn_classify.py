@@ -21,12 +21,16 @@ class CNNClassifyWordCharNgram(nn.Module):
 
         self.vocabs = vocabs
         self.cf = cf
-        self.filter_num = cf['filter_num']
-        self.kernel_sizes = cf['kernel_sizes']
+        self.filter_num_word = cf['filter_num_word']
+        self.filter_num_char = cf['filter_num_char']
+        self.kernel_sizes_char = cf['kernel_sizes_word']
+        self.kernel_sizes_word = cf['kernel_sizes_char']
         self.dropout_cnn = cf['dropout_cnn']
         self.output_size = len(vocab_label)
 
         len_feature_extract = 0
+        len_feature_extract_char = 0
+        len_feature_extract_word = 0
 
         self.word_embedding_dim = cf['word_embedding_dim']
         self.word_embedding_layer = nn.Embedding(len(vocab_word), self.word_embedding_dim)
@@ -40,31 +44,34 @@ class CNNClassifyWordCharNgram(nn.Module):
 
         if cf['D_cnn'] == "1_D":
             self.cnn_extract_word_ft = CNNFeatureExtract1D(self.word_embedding_dim,
-                                                     self.filter_num,
-                                                     self.kernel_sizes,
-                                                     self.dropout_cnn)
+                                                           self.filter_num_word,
+                                                           self.kernel_sizes_word,
+                                                           self.dropout_cnn)
         else:
             self.cnn_extract_word_ft = CNNFeatureExtract2D(self.word_embedding_dim,
-                                                           self.filter_num,
-                                                           self.kernel_sizes,
+                                                           self.filter_num_word,
+                                                           self.kernel_sizes_word,
                                                            self.dropout_cnn)
 
-        len_feature_extract += len(self.kernel_sizes) * self.filter_num
+        len_feature_extract_word += len(self.kernel_sizes_word) * self.filter_num_word
 
         self.char_embedding_dim = cf['char_embedding_dim']
         if self.char_embedding_dim != 0:
             self.char_embedding_layer = nn.Embedding(len(vocab_char), self.char_embedding_dim)
             if cf['D_cnn'] == "1_D":
                 self.cnn_extract_char_ft = CNNFeatureExtract1D(self.char_embedding_dim,
-                                                         self.filter_num,
-                                                         self.kernel_sizes,
-                                                         self.dropout_cnn)
+                                                               self.filter_num_char,
+                                                               self.kernel_sizes_char,
+                                                               self.dropout_cnn)
             else:
                 self.cnn_extract_char_ft = CNNFeatureExtract2D(self.char_embedding_dim,
-                                                               self.filter_num,
-                                                               self.kernel_sizes,
+                                                               self.filter_num_char,
+                                                               self.kernel_sizes_char,
                                                                self.dropout_cnn)
-            len_feature_extract = len_feature_extract * 2
+
+            len_feature_extract_char += len(self.kernel_sizes_char) * self.filter_num_char
+
+            len_feature_extract = len_feature_extract_char + len_feature_extract_word
 
         self.dropout_ffw = nn.Dropout(cf['dropout_ffw'])
 
@@ -100,21 +107,7 @@ class CNNClassifyWordCharNgram(nn.Module):
         list_predict = predict_value.cpu().numpy().tolist()
         list_target = target.cpu().numpy().tolist()
 
-        list_true, list_total = self.get_correct_total_each_class(list_predict, list_target)
-
-        return loss, list_true, list_total
-
-    def get_correct_total_each_class(self, list_predict_value, list_target_output):
-        list_true = [0] * self.output_size
-        list_total = [0] * self.output_size
-
-        for idx, value_predict in enumerate(list_predict_value):
-            list_total[list_target_output[idx]] += 1
-
-            if value_predict == list_target_output[idx]:
-                list_true[value_predict] += 1
-
-        return list_true, list_total
+        return loss, list_predict, list_target
 
     @classmethod
     def create(cls, path_folder_model, cf, vocabs):

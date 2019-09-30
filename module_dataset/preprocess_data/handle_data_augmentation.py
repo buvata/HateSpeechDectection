@@ -1,4 +1,3 @@
-import string
 import time
 import random
 from random import shuffle
@@ -30,19 +29,24 @@ def get_dict_synonym(path_file_dict):
             for e_token_1 in arr_line:
                 n_tmp = arr_line.copy()
                 n_tmp.remove(e_token_1)
-                for e_token_sub_1 in n_tmp:
-                    print(e_token_sub_1)
-                    if " " == e_token_sub_1[0]:
-                        n_tmp.remove(e_token_sub_1)
+                if " " == e_token_1[0]:
+                    pass
+                else:
+                    for e_token_sub_1 in n_tmp:
+                        if " " == e_token_sub_1[0]:
+                            n_tmp.remove(e_token_sub_1)
                 dict_sym[e_token_1] = n_tmp
 
             for e_token_2 in arr_line_capitalize:
                 n_tmp_capitalize = arr_line_capitalize.copy()
                 n_tmp_capitalize.remove(e_token_2)
-                for e_token_sub_2 in n_tmp_capitalize:
-                    if " " == e_token_sub_2[0]:
-                        n_tmp_capitalize.remove(e_token_sub_2)
-                dict_sym[e_token_2] = n_tmp_capitalize
+                if " " == e_token_2[0]:
+                    pass
+                else:
+                    for e_token_sub_2 in n_tmp_capitalize:
+                        if " " == e_token_sub_2[0]:
+                            n_tmp_capitalize.remove(e_token_sub_2)
+                    dict_sym[e_token_2] = n_tmp_capitalize
 
     return dict_sym
 
@@ -78,11 +82,13 @@ def check_mask_word_in_list_exception(text, list_word_exception):
     list_mask_exception = [0] * len(text.split(" "))
     for e_word_exception in list_word_exception:
         if e_word_exception in text:
+
             position = text.find(e_word_exception)
             start_number_token = get_number_token_with_length(text, position)
             end_number_token = start_number_token + len(e_word_exception.split(" "))
             for i in range(start_number_token, end_number_token):
                 list_mask_exception[i] = 1
+
     return list_mask_exception
 
 
@@ -106,7 +112,6 @@ def random_change_synonym_word(text, dict_word_synonym, thresh_hold_active=0.2):
         prob = random.random()
         if e_key in text and prob < thresh_hold_active and e_key not in list_value_must_skip:
             shuffle(e_value)
-            print(e_value)
             text = text.replace(e_key, e_value[0])
             list_value_must_skip += e_value.copy()
     return text
@@ -181,6 +186,9 @@ def process_augment_hate_data(text,
     text_random_change_synonym_word = random_change_synonym_word(text, dict_synonym, thresh_hold_active=0.5)
     list_text_augment.append(text_random_change_synonym_word)
 
+    text_lower = text.lower()
+    list_text_augment.append(text_lower)
+
     for i in range(n_augment_per_sent):
 
         prob = random.random()
@@ -188,9 +196,9 @@ def process_augment_hate_data(text,
             text = random_change_synonym_word(text, dict_synonym, thresh_hold_active=1)
 
         prob = random.random()
-        if prob < 0.2:
+        if prob < 0.15:
             list_mask_exception_after_change_synonym = check_mask_word_in_list_exception(text, list_word_exception)
-            text = random_delete_word(text, list_mask_exception_after_change_synonym, thresh_hold_active=0.2)
+            text = random_delete_word(text, list_mask_exception_after_change_synonym, thresh_hold_active=0.1)
 
         prob = random.random()
         if prob < 0.15:
@@ -217,5 +225,3 @@ if __name__ == '__main__':
     for i in range(10):
         a = random_change_synonym_word(text, dict_synonym, thresh_hold_active=1)
         print(a)
-
-
