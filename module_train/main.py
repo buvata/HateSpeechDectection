@@ -27,7 +27,8 @@ def train_model_dl(cf_common, cf_model):
                                       min_freq_char=cf_common['min_freq_char'],
                                       batch_size=cf_common['batch_size'],
                                       cache_folder=cf_common['cache_folder'],
-                                      name_vocab=cf_common['name_vocab'])
+                                      name_vocab=cf_common['name_vocab'],
+                                      path_vocab_pre_built=cf_common['path_vocab_pre_built'])
 
         data_train_iter = data['iters'][0]
 
@@ -48,7 +49,8 @@ def train_model_dl(cf_common, cf_model):
                                       min_freq_char=cf_common['min_freq_char'],
                                       batch_size=cf_common['batch_size'],
                                       cache_folder=cf_common['cache_folder'],
-                                      name_vocab=cf_common['name_vocab'])
+                                      name_vocab=cf_common['name_vocab'],
+                                      path_vocab_pre_built=cf_common['path_vocab_pre_built'])
 
         data_train_iter = data['iters'][0]
         if path_data_test is not None:
@@ -68,7 +70,7 @@ def train_model_dl(cf_common, cf_model):
                                         min_freq_char=cf_common['min_freq_char'],
                                         batch_size=cf_common['batch_size'],
                                         cache_folder=cf_common['cache_folder'],
-                                        name_vocab=cf_common['name_vocab'])
+                                        path_vocab_pre_built=cf_common['path_vocab_pre_built'],)
 
         data_train_iter = data['iters'][0]
         if path_data_test is not None:
@@ -102,30 +104,31 @@ if __name__ == '__main__':
     cf_common = {
         "path_save_model": "save_model/",
         "path_data": "../module_dataset/dataset/data_for_train/dl/data_k_fold/",
-        "path_data_train": "train_dl_id_1_augment",
+        "path_data_train": "train_dl_1",
         "path_data_test": "validation_dl_1",
-        "prefix_model": "model_cnn",
-        "log_file": "log_file_train_cnn.txt",
-        "type_model": "cnn_classify",
-        "num_epochs": 50,
-        "min_freq_word": 1,
+        "prefix_model": "cnn_fold_1",
+        "log_file": "log_fold_1_cnn.txt",
+        "type_model": "lstm_cnn_lm",
+        "num_epochs": 25,
+        "min_freq_word": 2,
         "min_freq_char": 5,
+        "path_vocab_pre_built": "save_model/vocabs_all.pt",
         "cache_folder": "../module_dataset/dataset/support_data",
-        "name_vocab": "social_embedding_100.txt",
-        "batch_size": 2
+        "name_vocab": "out_embedding.txt",
+        "batch_size": 32
     }
 
     cf_model_cnn_classify = {
         'use_xavier_weight_init': True,
-        'word_embedding_dim': 100,
-        'char_embedding_dim': 64,
-        'filter_num_word': 10,
+        'word_embedding_dim': 200,
+        'char_embedding_dim': 32,
+        'filter_num_word': 12,
         'filter_num_char': 10,
         'kernel_sizes_word': [2, 3, 4],
-        'kernel_sizes_char': [2, 3, 4],
-        'dropout_cnn': 0.5,
-        'dropout_ffw': 0.5,
-        'learning_rate': 0.001,
+        'kernel_sizes_char': [2, 3],
+        'dropout_cnn': 0.6,
+        'dropout_ffw': 0.55,
+        'learning_rate': 0.0002,
         'weight_decay': 0,
         'D_cnn': "1_D"
     }
@@ -137,13 +140,14 @@ if __name__ == '__main__':
         'hidden_size_word': 32,
         'hidden_size_char_lstm': 32,
         'use_highway_char': False,
-        'use_char_cnn': False,
+        'use_char_cnn': True,
+        'D_cnn': '1_D',
         'use_last_as_ft': True,
-        'char_cnn_filter_num': 15,
+        'char_cnn_filter_num': 5,
         'char_window_size': [2, 3],
         'dropout_cnn': 0.5,
         'dropout_rate': 0.5,
-        'learning_rate': 0.001,
+        'learning_rate': 0.0005,
         'weight_decay': 0
     }
 
@@ -151,26 +155,42 @@ if __name__ == '__main__':
         'use_xavier_weight_init': True,
         'word_embedding_dim': 200,
         'char_embedding_dim': 64,
-        'hidden_size_word': 5,
+        'hidden_size_word': 32,
         'use_highway_char': False,
         'use_last_as_ft': True,
-        'hidden_size_reduce': 256,
+        'hidden_size_reduce': 128,
         'use_char_cnn': True,
-        'D_cnn': '1_D',
-        'char_cnn_filter_num': 15,
+        'D_cnn': '2_D',
+        'char_cnn_filter_num': 10,
         'char_window_size': [2, 3],
-        'dropout_cnn': 0.5,
-        'dropout_rate': 0.5,
-        'learning_rate': 0.001,
-        'weight_decay': 10
+        'dropout_cnn': 0.55,
+        'dropout_rate': 0.55,
+        'learning_rate': 0.0005,
+        'weight_decay': 0
     }
 
-    if cf_common['type_model'] == 'cnn_classify':
-        train_model_dl(cf_common, cf_model_cnn_classify)
+    for j in range(3):
+        if j == 0:
+            cf_common.update({"type_model": "cnn_classify"})
+        if j == 1:
+            cf_common.update({"type_model": "lstm_cnn_word_char_base"})
+        if j == 2:
+            cf_common.update({"type_model": "lstm_cnn_lm"})
 
-    elif cf_common['type_model'] == 'lstm_cnn_word_char_base':
-        train_model_dl(cf_common, cf_model_char_base)
+        for i in range(1, 9):
+            path_data_train = "train_dl_id_{}_augment".format(i)
+            path_data_test = "validation_dl_{}".format(i)
+            cf_common.update({"path_data_train": path_data_train})
+            cf_common.update({"path_data_test": path_data_test})
 
-    elif cf_common['type_model'] == "lstm_cnn_lm":
-        train_model_dl(cf_common, cf_model_lstm_cnn_lm)
-#TODO need add config for run in difference gpu
+            cf_common.update({"prefix_model": "model_{}_fold_{}".format(cf_common['type_model'], i)})
+            cf_common.update({"log_file": "log_{}_fold_{}.txt".format(cf_common['type_model'], i)})
+
+            if cf_common['type_model'] == 'cnn_classify':
+                train_model_dl(cf_common, cf_model_cnn_classify)
+
+            elif cf_common['type_model'] == 'lstm_cnn_word_char_base':
+                train_model_dl(cf_common, cf_model_char_base)
+
+            elif cf_common['type_model'] == "lstm_cnn_lm":
+                train_model_dl(cf_common, cf_model_lstm_cnn_lm)
