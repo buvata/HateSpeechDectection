@@ -166,6 +166,7 @@ class LSTMCNNWordCharBase(nn.Module):
         final_output = self.compute(batch)
 
         logits = self.label(final_output)
+        # class_weights = torch.FloatTensor([0.2, 0.42, 0.38]).cuda()
         loss = F.cross_entropy(logits, target)
 
         predict_value = torch.max(logits, 1)[1]

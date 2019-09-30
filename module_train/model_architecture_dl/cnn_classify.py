@@ -100,7 +100,7 @@ class CNNClassifyWordCharNgram(nn.Module):
 
         output_ft = self.compute(batch)
         logits = self.label(output_ft)
-
+        # class_weights = torch.FloatTensor([0.1, 0.9, 0.8]).cuda()
         loss = F.cross_entropy(logits, target)
 
         predict_value = torch.max(logits, 1)[1]
@@ -110,14 +110,13 @@ class CNNClassifyWordCharNgram(nn.Module):
         return loss, list_predict, list_target
 
     @classmethod
-    def create(cls, path_folder_model, cf, vocabs, device_set="cuda:0"):
+    def create(cls, path_folder_model, cf, vocabs):
         model = cls(cf, vocabs)
         if cf['use_xavier_weight_init']:
             model.apply(xavier_uniform_init)
 
         if torch.cuda.is_available():
-            device = torch.device(device_set)
-            model = model.to(device)
+            model = model.cuda()
 
         path_vocab_file = os.path.join(path_folder_model, "vocabs.pt")
         torch.save(vocabs, path_vocab_file)
