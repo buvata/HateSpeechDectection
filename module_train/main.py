@@ -1,3 +1,5 @@
+# import sys
+# sys.path.append("/data/trangtv_workspace/HateSpeechDectection")
 from module_train.model_architecture_dl.cnn_classify import CNNClassifyWordCharNgram
 from module_train.model_architecture_dl.lstm_cnn_word_char_based import LSTMCNNWordCharBase
 from module_train.model_architecture_dl.lstm_cnn_word_char_lm import LSTMCNNWordCharLM

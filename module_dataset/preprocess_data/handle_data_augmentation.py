@@ -13,9 +13,9 @@ def get_dict_synonym(path_file_dict):
     with open(path_file_dict, "r") as rf:
         for e_line in rf.readlines():
             e_line = e_line.replace(", ", ",").replace("\n", "")
-            e_new_line = "," + remove_all_tone(e_line)
-            e_line += e_new_line
+            e_new_line = remove_all_tone(e_line)
             arr_line = e_line.split(",")
+            arr_rm_tone_line = e_new_line.split(",")
 
             # use for replace sure key wrap by space
             # tmp = []
@@ -47,6 +47,17 @@ def get_dict_synonym(path_file_dict):
                         if " " == e_token_sub_2[0]:
                             n_tmp_capitalize.remove(e_token_sub_2)
                     dict_sym[e_token_2] = n_tmp_capitalize
+
+            for e_token_3 in arr_rm_tone_line:
+                n_tmp_3 = arr_rm_tone_line.copy()
+                n_tmp_3.remove(e_token_3)
+                if " " == e_token_3[0]:
+                    pass
+                else:
+                    for e_token_sub_3 in n_tmp_3:
+                        if " " == e_token_sub_3[0]:
+                            n_tmp_3.remove(e_token_sub_3)
+                dict_sym[e_token_3] = n_tmp_3
 
     return dict_sym
 
@@ -196,17 +207,17 @@ def process_augment_hate_data(text,
             text = random_change_synonym_word(text, dict_synonym, thresh_hold_active=1)
 
         prob = random.random()
-        if prob < 0.15:
+        if prob < 0.2:
             list_mask_exception_after_change_synonym = check_mask_word_in_list_exception(text, list_word_exception)
             text = random_delete_word(text, list_mask_exception_after_change_synonym, thresh_hold_active=0.1)
 
         prob = random.random()
-        if prob < 0.15:
-            text = random_remove_tone(text, thresh_hold_active=0.15)
+        if prob < 0.05:
+            text = random_remove_tone(text, thresh_hold_active=0.05)
 
         prob = random.random()
-        if prob < 0.1:
-            text = random_make_new_word_by_character(text, thresh_hold_active=0.08)
+        if prob < 0.05:
+            text = random_make_new_word_by_character(text, thresh_hold_active=0.05)
 
         list_text_augment.append(text)
 

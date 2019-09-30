@@ -99,13 +99,9 @@ def get_predict_dl(path_data_test, path_save_model, path_model_checkpoint, type_
 
     return list_predicts
 
+
 if __name__ == '__main__':
-    '''
-    path_data_test = "../module_train/save_model/model_ml/data_ft.pkl"
-    path_save_model = "../module_train/save_model/model_ml/random_forest_model.pkl"
-    result = get_predict_ml(path_data_test, path_save_model)
-    print(result)
-    '''
+
     path_save_model = "../module_train/save_model/cnn_classify"
     path_data_test = "../module_dataset/dataset/data_for_train/exp_test.pkl"
     path_model_checkpoint = "../module_train/save_model/cnn_classify/model_lm_lstm_cnn_epoch_0_train_acc_0.6_loss_1.0921_test_acc_1.0_loss_0.3284"

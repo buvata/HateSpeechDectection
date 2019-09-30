@@ -350,7 +350,7 @@ if __name__ == '__main__':
                                 path_text_hate_translate,
                                 path_exception_list,
                                 path_dict_synonym,
-                                n_augment_per_sent=8)
+                                n_augment_per_sent=5)
 
     path_text_offensive = cf['path_offensive_data']
     path_text_offensive_translate = cf['path_offensive_augment']
@@ -359,13 +359,13 @@ if __name__ == '__main__':
                                 path_text_offensive_translate,
                                 path_exception_list,
                                 path_dict_synonym,
-                                n_augment_per_sent=8)
+                                n_augment_per_sent=5)
 
     add_agument_train_data(cf['path_folder_save_data_for_dl'],
                            cf['name_train'],
                            cf['path_hate_augment'],
                            cf['path_offensive_augment'],
-                           number_sent_augment=4)
+                           number_sent_augment=3)
     make_corpus_data(cf['train_process_emoji_punct'],
                      cf['test_process_emoji_punct'],
                      cf['path_offensive_augment'],
