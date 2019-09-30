@@ -13,7 +13,7 @@
   "path_offensive_augment": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/offensive_augment_data_word.csv",
   "path_hate_augment": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/hate_augment_data_tone_word.csv",
 
-  "path_corpus_data": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/corpus_data_train_with_agumentcsv",
+  "path_corpus_data": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/corpus_data_train_with_agument.csv",
   "path_save_embedding": "",
   "path_folder_save_data_for_dl": "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_for_train/dl/data_k_fold",
   "name_train": "train_dl_id",

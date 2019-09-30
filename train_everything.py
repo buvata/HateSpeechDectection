@@ -196,9 +196,12 @@ from utilities import *
 # a = f1_score(train_f1, test_f1, average=None)
 # print(a.tolist())
 # print(type(a.tolist()))
-import pickle
-w2v_dict = pickle.load(open("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/dict_map_comment.pkl", 'rb'))
-print(w2v_dict['comment']['mỏi'])
+# import pickle
+# w2v_dict = pickle.load(open("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/dict_map_comment.pkl", 'rb'))
+# print(w2v_dict['comment']['mỏi'])
+a = {"trang": "la"}
+a.update({"trang":"b"})
+print(a)
 
 
 

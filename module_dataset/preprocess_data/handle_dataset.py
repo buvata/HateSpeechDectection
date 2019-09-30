@@ -316,6 +316,48 @@ def write_new_augment_each_file(path_file_origin, path_file_augment,
                     wf.write("{}|{}\n".format(text_data, label_data))
 
 
+def convert_dict_map_to_vector(path_file_dict_map, path_file_vector):
+    w2v_dict = pickle.load(open(path_file_dict_map, "rb"))
+    with open(path_file_vector, "w") as wf:
+        wf.write("{} {}\n".format(len(w2v_dict['comment'].keys()), 200))
+
+        for e_key, e_value in w2v_dict['comment'].items():
+            # print(e_key)
+            str_value = " ".join([str(x_i) for x_i in e_value.tolist()])
+            line_write = "{} {}\n".format(e_key, str_value)
+            wf.write(line_write)
+
+
+def make_data_without_augment(path_folder):
+    for i in range(1, 9):
+        path_file = "{}/train_dl_id_{}".format(path_folder, i)
+        path_new_file = "{}/train_dl_{}".format(path_folder, i)
+        with open(path_new_file, "w") as wf:
+            with open(path_file, "r") as rf:
+                for e_line in rf.readlines():
+                    arr_line = e_line.replace("\n", "").split("|")
+                    text_data = arr_line[1],
+                    label_data = arr_line[2]
+                    line_write = "{}|{}\n".format(text_data, label_data)
+                    wf.write(line_write)
+
+
+def make_fake_dataset_for_build_vocabs(path_corpus_data):
+    path_fake_data = path_corpus_data.replace(".csv", "_fake.csv")
+    with open(path_fake_data, "w") as wf:
+        with open(path_corpus_data, "r") as rf:
+            for e_line in rf.readlines():
+                prob = random.random()
+                if prob < 0.7:
+                    label = 0
+                elif 0.7 <= prob < 0.9:
+                    label = 1
+                else:
+                    label = 2
+                line_write = "{}|{}\n".format(e_line.replace("\n", ""), label)
+                wf.write(line_write)
+
+
 if __name__ == '__main__':
     # norm_data_format("../dataset/data_for_train/exp_augment_train.csv", "normal.csv")
 
@@ -365,10 +407,13 @@ if __name__ == '__main__':
                            cf['name_train'],
                            cf['path_hate_augment'],
                            cf['path_offensive_augment'],
-                           number_sent_augment=3)
+                           number_sent_augment=5)
     make_corpus_data(cf['train_process_emoji_punct'],
                      cf['test_process_emoji_punct'],
                      cf['path_offensive_augment'],
                      cf['path_hate_augment'],
                      cf['path_corpus_data'])
+    make_fake_dataset_for_build_vocabs(cf['path_corpus_data'])
     # train_embedding_fasttext(cf)
+    # convert_dict_map_to_vector("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/dict_map_comment.pkl", "out_embedding.txt")
+    # make_data_without_augment("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_for_train/dl/data_k_fold")

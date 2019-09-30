@@ -191,23 +191,19 @@ def process_augment_hate_data(text,
     text_remove_all_tone = remove_all_tone(text)
     list_text_augment.append(text_remove_all_tone)
 
-    text_remove_tone = random_remove_tone(text)
-    list_text_augment.append(text_remove_tone)
-
-    text_random_change_synonym_word = random_change_synonym_word(text, dict_synonym, thresh_hold_active=0.5)
+    text_random_change_synonym_word = random_change_synonym_word(text, dict_synonym, thresh_hold_active=0.9)
     list_text_augment.append(text_random_change_synonym_word)
 
-    text_lower = text.lower()
-    list_text_augment.append(text_lower)
+    list_text_augment.append(text.lower())
 
     for i in range(n_augment_per_sent):
 
         prob = random.random()
-        if prob < 0.8:
+        if prob < 0.9:
             text = random_change_synonym_word(text, dict_synonym, thresh_hold_active=1)
 
         prob = random.random()
-        if prob < 0.2:
+        if prob < 0.3:
             list_mask_exception_after_change_synonym = check_mask_word_in_list_exception(text, list_word_exception)
             text = random_delete_word(text, list_mask_exception_after_change_synonym, thresh_hold_active=0.1)
 
@@ -216,7 +212,7 @@ def process_augment_hate_data(text,
             text = random_remove_tone(text, thresh_hold_active=0.05)
 
         prob = random.random()
-        if prob < 0.05:
+        if prob < 0.1:
             text = random_make_new_word_by_character(text, thresh_hold_active=0.05)
 
         list_text_augment.append(text)
