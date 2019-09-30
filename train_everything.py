@@ -190,12 +190,15 @@ from module_dataset.preprocess_data.handle_data_augmentation import *
 from utilities import *
 # print(get_all_path_file_in_folder("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_for_train/dl/data_k_fold_not_augment/train_dl_id"))
 
-train_f1 = [0] * 2000 + [1] * 10000 + [2] * 8000
-test_f1 = [0] * 3000 + [1] * 7000 + [2] * 10000
-from sklearn.metrics import f1_score
-a = f1_score(train_f1, test_f1, average=None)
-print(a.tolist())
-print(type(a.tolist()))
+# train_f1 = [0] * 2000 + [1] * 10000 + [2] * 8000
+# test_f1 = [0] * 3000 + [1] * 7000 + [2] * 10000
+# from sklearn.metrics import f1_score
+# a = f1_score(train_f1, test_f1, average=None)
+# print(a.tolist())
+# print(type(a.tolist()))
+import pickle
+w2v_dict = pickle.load(open("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/dict_map_comment.pkl", 'rb'))
+print(w2v_dict['comment']['mỏi'])
 
 
 

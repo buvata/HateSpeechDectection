@@ -173,3 +173,4 @@ if __name__ == '__main__':
 
     elif cf_common['type_model'] == "lstm_cnn_lm":
         train_model_dl(cf_common, cf_model_lstm_cnn_lm)
+#TODO need add config for run in difference gpu
