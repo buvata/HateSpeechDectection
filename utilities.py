@@ -62,6 +62,16 @@ def get_dict_augment_data(path_file):
     return dict_augment_data
 
 
+def get_list_test_id_from_file(path_file):
+    list_word = []
+    list_id = []
+    with open(path_file, "r") as rf:
+        for e_line in rf.readlines():
+            arr_line = e_line.replace("\n", "").split("|")
+            list_id.append(arr_line[0])
+            list_word.append(arr_line[1])
+    return list_id, list_word
+
 
 if __name__ == '__main__':
     path_hate = "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_process/hate_augment_data_tone_word.csv"

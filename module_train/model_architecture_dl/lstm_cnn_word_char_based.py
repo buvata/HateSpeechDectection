@@ -176,13 +176,14 @@ class LSTMCNNWordCharBase(nn.Module):
         return loss, list_predict, list_target
 
     @classmethod
-    def create(cls, path_folder_model, cf, vocabs):
+    def create(cls, path_folder_model, cf, vocabs, device_set="cuda:0"):
         model = cls(cf, vocabs)
         if cf['use_xavier_weight_init']:
             model.apply(xavier_uniform_init)
 
         if torch.cuda.is_available():
-            model = model.cuda()
+            device = torch.device(device_set)
+            model = model.to(device)
 
         path_vocab_file = os.path.join(path_folder_model, "vocabs.pt")
         torch.save(vocabs, path_vocab_file)

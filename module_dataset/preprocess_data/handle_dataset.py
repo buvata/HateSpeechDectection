@@ -251,9 +251,9 @@ def train_embedding_fasttext(cf):
             split_line = e_line.split(" ")
             l_split_lines.append(split_line)
 
-    ft = FastText(l_split_lines, sg=1, iter=5, min_n=2, min_count=2, size=100)
+    ft = FastText(l_split_lines, sg=1, iter=5, min_n=2, min_count=1, size=100)
     print(ft.wv.most_similar("vl", topn=20))
-    ft.wv.save_word2vec_format("social_embedding_100.txt", binary=False)
+    ft.wv.save_word2vec_format("social_embedding_100.bin", binary=True)
 
 
 def making_exception_list_kw_from_synonym(cf):
@@ -358,6 +358,17 @@ def make_fake_dataset_for_build_vocabs(path_corpus_data):
                 wf.write(line_write)
 
 
+def make_data_full_train_without_augment(path_file, path_new_file):
+    with open(path_new_file, "w") as wf:
+        with open(path_file, "r") as rf:
+            for e_line in rf.readlines():
+                arr_line = e_line.replace("\n", "").split("|")
+                text_data = arr_line[1]
+                label_data = arr_line[2]
+                line_write = "{}|{}\n".format(text_data, label_data)
+                wf.write(line_write)
+
+
 if __name__ == '__main__':
     # norm_data_format("../dataset/data_for_train/exp_augment_train.csv", "normal.csv")
 
@@ -388,32 +399,33 @@ if __name__ == '__main__':
     path_dict_synonym = cf['path_synonym']
     path_text_hate = cf['path_hate_data']
     path_text_hate_translate = cf['path_hate_augment']
-    make_data_with_augmentation(path_text_hate,
-                                path_text_hate_translate,
-                                path_exception_list,
-                                path_dict_synonym,
-                                n_augment_per_sent=5)
+    # make_data_with_augmentation(path_text_hate,
+    #                             path_text_hate_translate,
+    #                             path_exception_list,
+    #                             path_dict_synonym,
+    #                             n_augment_per_sent=5)
 
     path_text_offensive = cf['path_offensive_data']
     path_text_offensive_translate = cf['path_offensive_augment']
     # make_data_with_back_translate(path_text_offensive, path_text_offensive_translate)
-    make_data_with_augmentation(path_text_offensive,
-                                path_text_offensive_translate,
-                                path_exception_list,
-                                path_dict_synonym,
-                                n_augment_per_sent=5)
+    # make_data_with_augmentation(path_text_offensive,
+    #                             path_text_offensive_translate,
+    #                             path_exception_list,
+    #                             path_dict_synonym,
+    #                             n_augment_per_sent=5)
 
-    add_agument_train_data(cf['path_folder_save_data_for_dl'],
-                           cf['name_train'],
-                           cf['path_hate_augment'],
-                           cf['path_offensive_augment'],
-                           number_sent_augment=5)
-    make_corpus_data(cf['train_process_emoji_punct'],
-                     cf['test_process_emoji_punct'],
-                     cf['path_offensive_augment'],
-                     cf['path_hate_augment'],
-                     cf['path_corpus_data'])
-    make_fake_dataset_for_build_vocabs(cf['path_corpus_data'])
+    # add_agument_train_data(cf['path_folder_save_data_for_dl'],
+    #                        cf['name_train'],
+    #                        cf['path_hate_augment'],
+    #                        cf['path_offensive_augment'],
+    #                        number_sent_augment=5)
+    # make_corpus_data(cf['train_process_emoji_punct'],
+    #                  cf['test_process_emoji_punct'],
+    #                  cf['path_offensive_augment'],
+    #                  cf['path_hate_augment'],
+    #                  cf['path_corpus_data'])
+    # make_fake_dataset_for_build_vocabs(cf['path_corpus_data'])
     # train_embedding_fasttext(cf)
     # convert_dict_map_to_vector("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/dict_map_comment.pkl", "out_embedding.txt")
     # make_data_without_augment("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_for_train/dl/data_k_fold")
+    make_data_full_train_without_augment("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_for_train/dl/data_full/train_process_emoji_punct.csv", "train_without_augment.txt")

@@ -28,7 +28,6 @@ class CNNClassifyWordCharNgram(nn.Module):
         self.dropout_cnn = cf['dropout_cnn']
         self.output_size = len(vocab_label)
 
-        len_feature_extract = 0
         len_feature_extract_char = 0
         len_feature_extract_word = 0
 
@@ -55,6 +54,7 @@ class CNNClassifyWordCharNgram(nn.Module):
 
         len_feature_extract_word += len(self.kernel_sizes_word) * self.filter_num_word
 
+        len_feature_extract = len_feature_extract_word
         self.char_embedding_dim = cf['char_embedding_dim']
         if self.char_embedding_dim != 0:
             self.char_embedding_layer = nn.Embedding(len(vocab_char), self.char_embedding_dim)
@@ -70,15 +70,16 @@ class CNNClassifyWordCharNgram(nn.Module):
                                                                self.dropout_cnn)
 
             len_feature_extract_char += len(self.kernel_sizes_char) * self.filter_num_char
-
-            len_feature_extract = len_feature_extract_char + len_feature_extract_word
+            len_feature_extract += len_feature_extract_char
 
         self.dropout_ffw = nn.Dropout(cf['dropout_ffw'])
 
         self.label = nn.Linear(len_feature_extract, len(vocab_label))
 
-    def compute(self, batch):
+    def compute(self, batch, training=True):
         inputs_word_emb = self.word_embedding_layer(batch.inputs_word)
+        inputs_word_emb = inputs_word_emb.permute(0, 2, 1)
+        inputs_word_emb = F.dropout2d(inputs_word_emb, self.dropout_cnn, training=training)
         word_ft = self.cnn_extract_word_ft(inputs_word_emb)
 
         ft = self.dropout_ffw(word_ft)
@@ -88,9 +89,9 @@ class CNNClassifyWordCharNgram(nn.Module):
             ft = self.dropout_ffw(torch.cat([word_ft, char_ft], -1))
         return ft
 
-    def forward(self, batch):
+    def forward(self, batch, training=True):
         with torch.no_grad():
-            output_ft = self.compute(batch)
+            output_ft = self.compute(batch, training)
             output_predictions = self.label(output_ft)
 
         return output_predictions
@@ -110,13 +111,14 @@ class CNNClassifyWordCharNgram(nn.Module):
         return loss, list_predict, list_target
 
     @classmethod
-    def create(cls, path_folder_model, cf, vocabs):
+    def create(cls, path_folder_model, cf, vocabs, device_set="cuda:0"):
         model = cls(cf, vocabs)
         if cf['use_xavier_weight_init']:
             model.apply(xavier_uniform_init)
 
         if torch.cuda.is_available():
-            model = model.cuda()
+            device = torch.device(device_set)
+            model = model.to(device)
 
         path_vocab_file = os.path.join(path_folder_model, "vocabs.pt")
         torch.save(vocabs, path_vocab_file)

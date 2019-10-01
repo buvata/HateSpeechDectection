@@ -33,7 +33,6 @@ class CNNFeatureExtract2D(nn.Module):
         return output_feature
 
 
-
 class CNNFeatureExtract1D(nn.Module):
     def __init__(self, char_embedding_dim, filter_num, windows_size,
                  dropout_cnn):
