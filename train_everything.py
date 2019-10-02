@@ -221,22 +221,28 @@
 # print(d)
 # F.dropout2d(a, 0.2, )
 d = {"a": [2 ]}
-print(d['a'][0])
+for i in range(3):
+    e = d.copy()
+    e.update({"a": 4})
+    print(e)
+    print(d)
 
-dict_model = {
-    "model_1": {
-        "type_model": "lstm_cnn_word",
-        "folder_model": "a",
-        "list_checkpoint": [],
-        "list_weighted": [1, 1]
-    },
-    "model_2": {
-        "type_model": "lstm_cnn_word",
-        "folder_model": "b",
-        "list_checkpoint": [],
-        "list_weighted": [1, 1]
-    }
-}
-for e_key, e_value in dict_model.items():
-    print(e_key)
-# print(dict_model)
+
+
+# dict_model = {
+#     "model_1": {
+#         "type_model": "lstm_cnn_word_case_1",
+#         "folder_model": "a",
+#         "list_checkpoint": [],
+#         "list_weighted": [1, 1]
+#     },
+#     "model_2": {
+#         "type_model": "lstm_cnn_word_case_1",
+#         "folder_model": "b",
+#         "list_checkpoint": [],
+#         "list_weighted": [1, 1]
+#     }
+# }
+# for e_key, e_value in dict_model.items():
+#     print(e_key)
+# # print(dict_model)

@@ -11,7 +11,7 @@ from utilities import *
 
 
 def get_input_processor_words(inputs, type_model, vocab_word, vocab_char=None):
-    if type_model == "word_char_based" or type_model == "lstm_cnn_word":
+    if type_model == "word_char_based" or type_model == "lstm_cnn_word_case_1":
 
         inputs_word = data.Field(init_token="<bos>", eos_token="<eos>", batch_first=True)
 
@@ -91,7 +91,7 @@ def get_predict_dl(path_data_test, path_save_model, path_model_checkpoint, type_
     elif type_model == "lstm_cnn_lm":
         model = LSTMCNNWordCharLM.load(path_save_model, path_model_checkpoint)
 
-    elif type_model == "lstm_cnn_word":
+    elif type_model == "lstm_cnn_word_case_1":
         model = LSTMCNNWord.load(path_save_model, path_model_checkpoint)
 
     vocab_word, vocab_char, vocab_label = model.vocabs
@@ -133,7 +133,7 @@ def get_average_predict_model(path_submission, path_data_test,
             elif type_model == "lstm_cnn_lm":
                 model = LSTMCNNWordCharLM.load(path_save_model, e_checkpoint)
 
-            elif type_model == "lstm_cnn_word":
+            elif type_model == "lstm_cnn_word_case_1":
                 model = LSTMCNNWord.load(path_save_model, e_checkpoint)
 
             vocab_word, vocab_char, vocab_label = model.vocabs
@@ -176,8 +176,8 @@ def get_average_predict_model(path_submission, path_data_test,
 
 if __name__ == '__main__':
 
-    path_save_model_1 = "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_4"
-    path_save_model_2 = "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_5"
+    path_save_model_1 = "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_2"
+    path_save_model_2 = "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_3"
     path_data_test = "../module_dataset/dataset/data_for_train/dl/data_full/test_process_emoji_punct.csv"
     path_model_checkpoint = "../module_train/save_model/cnn_classify/" \
                             "model_cnn_classify_fold_1_epoch_23_train_loss_0.4012_macro0.7323_full__0.93_0.68_0.58_test_loss_0.2128_macro0.7072_full__0.98_0.52_0.63"
@@ -195,22 +195,22 @@ if __name__ == '__main__':
 
     dict_model = {
         "model_1": {
-            "type_model": "lstm_cnn_word",
+            "type_model": "lstm_cnn_word_case_1",
             "folder_model": path_save_model_1,
-            "list_checkpoint": ["/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_4/case_4_cnn_char_hidden_word_64_ws_2_8_spatial_drop__epoch_16_train_loss_0.2536_macro0.8535_full__0.96_0.79_0.81",
-                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_4/case_4_cnn_char_hidden_word_64_ws_2_8_spatial_drop__epoch_21_train_loss_0.2131_macro0.882_full__0.96_0.82_0.86",
-                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_4/case_4_cnn_char_hidden_word_64_ws_2_8_spatial_drop__epoch_27_train_loss_0.1779_macro0.9022_full__0.96_0.85_0.89",
-                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_4/case_4_cnn_char_hidden_word_64_ws_2_8_spatial_drop__epoch_30_train_loss_0.1605_macro0.9117_full__0.97_0.86_0.91"
+            "list_checkpoint": ["/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_2/case_4_cnn_char_hidden_word_64_ws_2_8_spatial_drop__epoch_16_train_loss_0.2536_macro0.8535_full__0.96_0.79_0.81",
+                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_2/case_4_cnn_char_hidden_word_64_ws_2_8_spatial_drop__epoch_21_train_loss_0.2131_macro0.882_full__0.96_0.82_0.86",
+                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_2/case_4_cnn_char_hidden_word_64_ws_2_8_spatial_drop__epoch_27_train_loss_0.1779_macro0.9022_full__0.96_0.85_0.89",
+                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_2/case_4_cnn_char_hidden_word_64_ws_2_8_spatial_drop__epoch_30_train_loss_0.1605_macro0.9117_full__0.97_0.86_0.91"
                                 ],
             "list_weighted": [1, 1, 1, 1]
         },
         "model_2": {
-            "type_model": "lstm_cnn_word",
+            "type_model": "lstm_cnn_word_case_1",
             "folder_model": path_save_model_2,
-            "list_checkpoint": ["/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_5/case_6_lstm_char_hidden_word_64_ws_1_16_spatial_drop__epoch_15_train_loss_0.2865_macro0.8294_full__0.95_0.77_0.77",
-                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_5/case_6_lstm_char_hidden_word_64_ws_1_16_spatial_drop__epoch_20_train_loss_0.2334_macro0.8681_full__0.96_0.83_0.81",
-                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_5/case_6_lstm_char_hidden_word_64_ws_1_16_spatial_drop__epoch_26_train_loss_0.1943_macro0.891_full__0.96_0.86_0.86",
-                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_5/case_6_lstm_char_hidden_word_64_ws_1_16_spatial_drop__epoch_30_train_loss_0.1701_macro0.9041_full__0.97_0.88_0.87"],
+            "list_checkpoint": ["/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_3/case_6_lstm_char_hidden_word_64_ws_1_16_spatial_drop__epoch_15_train_loss_0.2865_macro0.8294_full__0.95_0.77_0.77",
+                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_3/case_6_lstm_char_hidden_word_64_ws_1_16_spatial_drop__epoch_20_train_loss_0.2334_macro0.8681_full__0.96_0.83_0.81",
+                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_3/case_6_lstm_char_hidden_word_64_ws_1_16_spatial_drop__epoch_26_train_loss_0.1943_macro0.891_full__0.96_0.86_0.86",
+                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_3/case_6_lstm_char_hidden_word_64_ws_1_16_spatial_drop__epoch_30_train_loss_0.1701_macro0.9041_full__0.97_0.88_0.87"],
             "list_weighted": [1, 1, 1, 1]
         }
     }
