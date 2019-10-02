@@ -1,2 +1,0 @@
-
-model_lstm_cnn_lm_fold_8_epoch_0_train_loss_1.0623_macro0.3928_full__0.75_0.21_0.22_test_loss_0.4809_macro0.5322_full__0.94_0.2_0.45

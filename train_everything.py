@@ -213,19 +213,24 @@
 # # print(n_a)
 # #
 # #
-# import torch
-# import torch.nn.functional as F
-# a = torch.Tensor([1,2,-3])
+import torch
+import torch.nn.functional as F
+a = torch.Tensor([[-11,2,-3]])
+b = a[0]
+print(b)
 # print(a)
 # d = F.log_softmax(a, dim=-1)
+d = F.softmax(b)
+print(d)
 # print(d)
 # F.dropout2d(a, 0.2, )
-d = {"a": [2 ]}
-for i in range(3):
-    e = d.copy()
-    e.update({"a": 4})
-    print(e)
-    print(d)
+# d = {"a": [2 ]}
+# for i in range(3):
+#     e = d.copy()
+#     e.update({"a": 4})
+#     print(e)
+#     print(d)
+
 
 
 

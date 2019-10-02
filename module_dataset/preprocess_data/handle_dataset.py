@@ -336,7 +336,7 @@ def make_data_without_augment(path_folder):
             with open(path_file, "r") as rf:
                 for e_line in rf.readlines():
                     arr_line = e_line.replace("\n", "").split("|")
-                    text_data = arr_line[1],
+                    text_data = arr_line[1]
                     label_data = arr_line[2]
                     line_write = "{}|{}\n".format(text_data, label_data)
                     wf.write(line_write)
@@ -427,5 +427,5 @@ if __name__ == '__main__':
     # make_fake_dataset_for_build_vocabs(cf['path_corpus_data'])
     # train_embedding_fasttext(cf)
     # convert_dict_map_to_vector("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/dict_map_comment.pkl", "out_embedding.txt")
-    # make_data_without_augment("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_for_train/dl/data_k_fold")
-    make_data_full_train_without_augment("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_for_train/dl/data_full/train_process_emoji_punct.csv", "train_without_augment.txt")
+    make_data_without_augment("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_for_train/dl/data_k_fold")
+    # make_data_full_train_without_augment("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_for_train/dl/data_full/train_process_emoji_punct.csv", "train_without_augment.txt")

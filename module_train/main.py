@@ -76,7 +76,8 @@ def train_model_dl(cf_common, cf_model):
                                         min_freq_char=cf_common['min_freq_char'],
                                         batch_size=cf_common['batch_size'],
                                         cache_folder=cf_common['cache_folder'],
-                                        path_vocab_pre_built=cf_common['path_vocab_pre_built'])
+                                        path_vocab_pre_built=cf_common['path_vocab_pre_built'],
+                                        sort_key=cf_common['sort_key'])
 
         data_train_iter = data['iters'][0]
         if path_data_test is not None:
@@ -97,7 +98,8 @@ def train_model_dl(cf_common, cf_model):
                                         min_freq_char=cf_common['min_freq_char'],
                                         batch_size=cf_common['batch_size'],
                                         cache_folder=cf_common['cache_folder'],
-                                        path_vocab_pre_built=cf_common['path_vocab_pre_built'])
+                                        path_vocab_pre_built=cf_common['path_vocab_pre_built'],
+                                        sort_key=cf_common['sort_key'])
         print(data)
         data_train_iter = data['iters'][0]
         if path_data_test is not None:
@@ -146,6 +148,7 @@ if __name__ == '__main__':
         "path_vocab_pre_built": "save_model/vocabs_fasttext_full.pt",
         "cache_folder": "../module_dataset/dataset/support_data",
         "name_vocab": "out_embedding.txt",
+        "sort_key": False,
         "batch_size": 32
     }
 

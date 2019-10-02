@@ -1,1 +1,0 @@
-{"use_xavier_weight_init": true, "word_embedding_dim": 200, "char_embedding_dim": 64, "hidden_size_word": 32, "use_highway_char": false, "use_last_as_ft": true, "hidden_size_reduce": 128, "use_char_cnn": true, "D_cnn": "2_D", "char_cnn_filter_num": 10, "char_window_size": [2, 3], "dropout_cnn": 0.55, "dropout_rate": 0.55, "learning_rate": 0.0005, "weight_decay": 0}

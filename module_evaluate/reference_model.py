@@ -8,10 +8,11 @@ import numpy as np
 
 from torchtext import data
 from utilities import *
+import torch.nn.functional as F
 
 
 def get_input_processor_words(inputs, type_model, vocab_word, vocab_char=None):
-    if type_model == "word_char_based" or type_model == "lstm_cnn_word_case_1":
+    if type_model == "lstm_cnn_word_char_based" or type_model == "lstm_cnn_word":
 
         inputs_word = data.Field(init_token="<bos>", eos_token="<eos>", batch_first=True)
 
@@ -91,7 +92,7 @@ def get_predict_dl(path_data_test, path_save_model, path_model_checkpoint, type_
     elif type_model == "lstm_cnn_lm":
         model = LSTMCNNWordCharLM.load(path_save_model, path_model_checkpoint)
 
-    elif type_model == "lstm_cnn_word_case_1":
+    elif type_model == "lstm_cnn_word":
         model = LSTMCNNWord.load(path_save_model, path_model_checkpoint)
 
     vocab_word, vocab_char, vocab_label = model.vocabs
@@ -133,13 +134,10 @@ def get_average_predict_model(path_submission, path_data_test,
             elif type_model == "lstm_cnn_lm":
                 model = LSTMCNNWordCharLM.load(path_save_model, e_checkpoint)
 
-            elif type_model == "lstm_cnn_word_case_1":
+            elif type_model == "lstm_cnn_word":
                 model = LSTMCNNWord.load(path_save_model, e_checkpoint)
 
             vocab_word, vocab_char, vocab_label = model.vocabs
-            print(vocab_word.stoi)
-            print(vocab_char.stoi)
-            print(vocab_label.stoi)
             for idx, e_sent in enumerate(list_test_sent):
 
                 data_e_line = get_input_processor_words(e_sent, type_model, vocab_word, vocab_char)
@@ -147,8 +145,9 @@ def get_average_predict_model(path_submission, path_data_test,
 
                 print("{}|{}\n".format(e_sent, torch.max(predict, 1)[1].numpy().tolist()[0]))
 
-                e_predict = predict.numpy().tolist()[0]
-                dict_predict[list_id[idx]].append(e_predict)
+                e_predict = predict[0]
+                output_score_soft_max = F.softmax(e_predict).numpy().tolist()
+                dict_predict[list_id[idx]].append(output_score_soft_max)
 
     with open("dict_predict_cnn.pkl", "wb") as dict_write:
         pickle.dump(dict_predict, dict_write, protocol=pickle.HIGHEST_PROTOCOL)
@@ -176,7 +175,7 @@ def get_average_predict_model(path_submission, path_data_test,
 
 if __name__ == '__main__':
 
-    path_save_model_1 = "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_2"
+    path_save_model_1 = "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_1"
     path_save_model_2 = "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_3"
     path_data_test = "../module_dataset/dataset/data_for_train/dl/data_full/test_process_emoji_punct.csv"
     path_model_checkpoint = "../module_train/save_model/cnn_classify/" \
@@ -187,31 +186,13 @@ if __name__ == '__main__':
     # for e_path_file in list_path_file:
     #     if "model_cnn_classify_fold" in e_path_file:
     #         list_path_checkpoint.append(e_path_file)
-    list_path_checkpoint = ["/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/cnn_classify/model_cnn_classify_fold_1_epoch_23_train_loss_0.4012_macro0.7323_full__0.93_0.68_0.58_test_loss_0.2128_macro0.7072_full__0.98_0.52_0.63",
-                         "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/cnn_classify/model_cnn_classify_fold_2_epoch_25_train_loss_0.3752_macro0.754_full__0.93_0.7_0.63_test_loss_0.2436_macro0.6709_full__0.97_0.5_0.54",
-                         "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/cnn_classify/model_cnn_classify_fold_3_epoch_11_train_loss_0.5021_macro0.6655_full__0.9_0.58_0.51_test_loss_0.2644_macro0.671_full__0.97_0.45_0.59",
-                         "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/cnn_classify/model_cnn_classify_fold_4_epoch_21_train_loss_0.3905_macro0.7413_full__0.93_0.7_0.58_test_loss_0.2131_macro0.6711_full__0.97_0.48_0.56",
-                         "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/cnn_classify/model_cnn_classify_fold_7_epoch_18_train_loss_0.4213_macro0.7123_full__0.92_0.65_0.56_test_loss_0.2242_macro0.6802_full__0.97_0.49_0.58"]
-
     dict_model = {
         "model_1": {
-            "type_model": "lstm_cnn_word_case_1",
+            "type_model": "lstm_cnn_word_char_based",
             "folder_model": path_save_model_1,
-            "list_checkpoint": ["/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_2/case_4_cnn_char_hidden_word_64_ws_2_8_spatial_drop__epoch_16_train_loss_0.2536_macro0.8535_full__0.96_0.79_0.81",
-                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_2/case_4_cnn_char_hidden_word_64_ws_2_8_spatial_drop__epoch_21_train_loss_0.2131_macro0.882_full__0.96_0.82_0.86",
-                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_2/case_4_cnn_char_hidden_word_64_ws_2_8_spatial_drop__epoch_27_train_loss_0.1779_macro0.9022_full__0.96_0.85_0.89",
-                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_2/case_4_cnn_char_hidden_word_64_ws_2_8_spatial_drop__epoch_30_train_loss_0.1605_macro0.9117_full__0.97_0.86_0.91"
+            "list_checkpoint": ["/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_1/case_1_lstm_lstm_word_char__epoch_11_train_loss_0.1406_macro0.7073_full__0.98_0.52_0.62"
                                 ],
-            "list_weighted": [1, 1, 1, 1]
-        },
-        "model_2": {
-            "type_model": "lstm_cnn_word_case_1",
-            "folder_model": path_save_model_2,
-            "list_checkpoint": ["/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_3/case_6_lstm_char_hidden_word_64_ws_1_16_spatial_drop__epoch_15_train_loss_0.2865_macro0.8294_full__0.95_0.77_0.77",
-                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_3/case_6_lstm_char_hidden_word_64_ws_1_16_spatial_drop__epoch_20_train_loss_0.2334_macro0.8681_full__0.96_0.83_0.81",
-                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_3/case_6_lstm_char_hidden_word_64_ws_1_16_spatial_drop__epoch_26_train_loss_0.1943_macro0.891_full__0.96_0.86_0.86",
-                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_3/case_6_lstm_char_hidden_word_64_ws_1_16_spatial_drop__epoch_30_train_loss_0.1701_macro0.9041_full__0.97_0.88_0.87"],
-            "list_weighted": [1, 1, 1, 1]
+            "list_weighted": [1]
         }
     }
 
