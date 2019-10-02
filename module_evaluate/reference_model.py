@@ -143,10 +143,10 @@ def get_average_predict_model(path_submission, path_data_test,
                 data_e_line = get_input_processor_words(e_sent, type_model, vocab_word, vocab_char)
                 predict = model(data_e_line)
 
-                print("{}|{}\n".format(e_sent, torch.max(predict, 1)[1].numpy().tolist()[0]))
+                print("{}|{}\n".format(e_sent, torch.max(predict, 1)[1].cpu().numpy().tolist()[0]))
 
                 e_predict = predict[0]
-                output_score_soft_max = F.softmax(e_predict).numpy().tolist()
+                output_score_soft_max = F.softmax(e_predict).cpu().numpy().tolist()
                 dict_predict[list_id[idx]].append(output_score_soft_max)
 
     with open("dict_predict_cnn.pkl", "wb") as dict_write:
@@ -175,7 +175,7 @@ def get_average_predict_model(path_submission, path_data_test,
 
 if __name__ == '__main__':
 
-    path_save_model_1 = "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_1"
+    path_save_model_1 = "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/cnn_classify_case_1"
     path_save_model_2 = "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_3"
     path_data_test = "../module_dataset/dataset/data_for_train/dl/data_full/test_process_emoji_punct.csv"
     path_model_checkpoint = "../module_train/save_model/cnn_classify/" \
@@ -188,11 +188,13 @@ if __name__ == '__main__':
     #         list_path_checkpoint.append(e_path_file)
     dict_model = {
         "model_1": {
-            "type_model": "lstm_cnn_word_char_based",
+            "type_model": "cnn_classify",
             "folder_model": path_save_model_1,
-            "list_checkpoint": ["/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/lstm_cnn_word_case_1/case_1_lstm_lstm_word_char__epoch_11_train_loss_0.1406_macro0.7073_full__0.98_0.52_0.62"
+            "list_checkpoint": ["/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/cnn_classify_case_1/model_cnn_classify_fold_1_epoch_39_train_loss_0.1081_macro0.7828_full__0.99_0.68_0.69_test_loss_0.1775_macro0.7234_full__0.98_0.5_0.7",
+                                "/home/trangtv/Documents/project/HateSpeechDectection/module_train/save_model/cnn_classify_case_1/model_cnn_classify_fold_1_epoch_36_train_loss_0.1144_macro0.7762_full__0.99_0.67_0.67_test_loss_0.1722_macro0.7211_full__0.98_0.51_0.68",
+
                                 ],
-            "list_weighted": [1]
+            "list_weighted": [1] *6
         }
     }
 

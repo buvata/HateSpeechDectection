@@ -133,137 +133,102 @@ def train_ml(path_save_model, path_data, name_train, name_test=None):
 if __name__ == '__main__':
     cf_common = {
         "path_save_model": "save_model/",
-        "path_data": "../module_dataset/dataset/data_for_train/dl/data_full/",
-        "path_data_train": "train_without_augment.txt",
-        "path_data_test": None,
+        "path_data": "../module_dataset/dataset/data_for_train/dl/data_k_fold/",
+        "path_data_train": "train_dl_1",
+        "path_data_test": "validation_dl_1",
         "prefix_model": "lstm_cnn_word_case_1",
         "log_file": "log_cnn_word.txt",
-        "type_model": "lstm_cnn_word",
-        "folder_model": "lstm_cnn_word_case_1",
+        "type_model": "cnn_classify",
+        "folder_model": "cnn_classify_case_1",
         'path_checkpoint': "",
         "device_set": "cuda:0",
-        "num_epochs": 100,
+        "num_epochs": 40,
         "min_freq_word": 1,
         "min_freq_char": 5,
-        "path_vocab_pre_built": "save_model/vocabs_fasttext_full.pt",
+        "path_vocab_pre_built": "save_model/vocabs_full_dim_500.pt",
         "cache_folder": "../module_dataset/dataset/support_data",
         "name_vocab": "out_embedding.txt",
-        "sort_key": False,
-        "batch_size": 32
+        "sort_key": True,
+        "batch_size": 64
     }
 
     cf_model_cnn_classify = {
         'use_xavier_weight_init': True,
-        'word_embedding_dim': 200,
+        'word_embedding_dim': 500,
         'char_embedding_dim': 0,
-        'filter_num_word': 12,
+        'filter_num_word': 20,
         'filter_num_char': 10,
         'kernel_sizes_word': [2, 3, 4],
         'kernel_sizes_char': [2, 3],
-        'dropout_cnn': 0.6,
-        'dropout_ffw': 0.55,
-        'learning_rate': 0.0002,
+        'dropout_cnn': 0.35,
+        'dropout_ffw': 0.35,
+        'learning_rate': 0.0001,
         'weight_decay': 0,
         'D_cnn': "1_D"
     }
 
-    cf_model_char_base = {
-        'use_xavier_weight_init': True,
-        'word_embedding_dim': 200,
-        'char_embedding_dim': 64,
-        'hidden_size_word': 32,
-        'hidden_size_char_lstm': 32,
-        'use_highway_char': False,
-        'use_char_cnn': True,
-        'D_cnn': '1_D',
-        'use_last_as_ft': True,
-        'char_cnn_filter_num': 5,
-        'char_window_size': [2, 3],
-        'dropout_cnn': 0.5,
-        'dropout_rate': 0.5,
-        'learning_rate': 0.0005,
-        'weight_decay': 0
-    }
-
-    cf_model_lstm_cnn_lm = {
-        'use_xavier_weight_init': True,
-        'word_embedding_dim': 200,
-        'char_embedding_dim': 64,
-        'hidden_size_word': 32,
-        'use_highway_char': False,
-        'use_last_as_ft': True,
-        'hidden_size_reduce': 128,
-        'use_char_cnn': True,
-        'D_cnn': '2_D',
-        'char_cnn_filter_num': 10,
-        'char_window_size': [2, 3],
-        'dropout_cnn': 0.55,
-        'dropout_rate': 0.55,
-        'learning_rate': 0.0005,
-        'weight_decay': 0
-    }
-
-    cf_model_lstm_cnn_word = {
-        'use_xavier_weight_init': True,
-        'word_embedding_dim': 300,
-        'char_embedding_dim': 32,
-        'hidden_size_word': 64,
-        'hidden_size_char_lstm': 32,
-        'use_highway_char': False,
-        'use_char_cnn': True,
-        'D_cnn': '1_D',
-        'char_cnn_filter_num': 5,
-        'char_window_size': [2, 3],
-        "cnn_filter_num": 16,
-        "window_size": [1],
-        'dropout_cnn': 0.55,
-        'dropout_rate': 0.55,
-        'learning_rate': 0.0001,
-        'weight_decay': 0
-    }
-
-    # for j in range(3):
-    # j = 3
-    # if j == 0:
-    #     cf_common.update({"type_model": "cnn_classify"})
-    # if j == 1:
-    #     cf_common.update({"type_model": "lstm_cnn_word_char_base"})
-    # if j == 2:
-    #     cf_common.update({"type_model": "lstm_cnn_lm"})
-    # if j == 3:
-    #     cf_common.update({"type_model": "lstm_cnn_word_case_1"})
+    # cf_model_char_base = {
+    #     'use_xavier_weight_init': True,
+    #     'word_embedding_dim': 200,
+    #     'char_embedding_dim': 64,
+    #     'hidden_size_word': 32,
+    #     'hidden_size_char_lstm': 32,
+    #     'use_highway_char': False,
+    #     'use_char_cnn': True,
+    #     'D_cnn': '1_D',
+    #     'use_last_as_ft': True,
+    #     'char_cnn_filter_num': 5,
+    #     'char_window_size': [2, 3],
+    #     'dropout_cnn': 0.5,
+    #     'dropout_rate': 0.5,
+    #     'learning_rate': 0.0005,
+    #     'weight_decay': 0
+    # }
     #
-    for i in range(1, 5):
-        cf_common_2 = cf_common.copy()
-        cf_model_lstm_cnn_word_2 = cf_model_lstm_cnn_word.copy()
+    # cf_model_lstm_cnn_lm = {
+    #     'use_xavier_weight_init': True,
+    #     'word_embedding_dim': 200,
+    #     'char_embedding_dim': 64,
+    #     'hidden_size_word': 32,
+    #     'use_highway_char': False,
+    #     'use_last_as_ft': True,
+    #     'hidden_size_reduce': 128,
+    #     'use_char_cnn': True,
+    #     'D_cnn': '2_D',
+    #     'char_cnn_filter_num': 10,
+    #     'char_window_size': [2, 3],
+    #     'dropout_cnn': 0.55,
+    #     'dropout_rate': 0.55,
+    #     'learning_rate': 0.0005,
+    #     'weight_decay': 0
+    # }
+    #
+    # cf_model_lstm_cnn_word = {
+    #     'use_xavier_weight_init': True,
+    #     'word_embedding_dim': 300,
+    #     'char_embedding_dim': 32,
+    #     'hidden_size_word': 64,
+    #     'hidden_size_char_lstm': 32,
+    #     'use_highway_char': False,
+    #     'use_char_cnn': True,
+    #     'D_cnn': '1_D',
+    #     'char_cnn_filter_num': 5,
+    #     'char_window_size': [2, 3],
+    #     "cnn_filter_num": 16,
+    #     "window_size": [1],
+    #     'dropout_cnn': 0.55,
+    #     'dropout_rate': 0.55,
+    #     'learning_rate': 0.0001,
+    #     'weight_decay': 0
+    # }
 
-        cf_common_2.update({"prefix_model": "lstm_cnn_word_case_{}".format(i)})
-        cf_common_2.update({"folder_model": "lstm_cnn_word_case_{}".format(i)})
+    for i in range(1, 9):
+        path_data_train = "train_dl_{}".format(i)
+        path_data_test = "validation_dl_{}".format(i)
+        cf_common.update({"path_data_train": path_data_train})
+        cf_common.update({"path_data_test": path_data_test})
 
-        if i == 1:
-            cf_model_lstm_cnn_word_2.update({"use_char_cnn": True})
-        if i == 2:
-            cf_model_lstm_cnn_word_2.update({"use_char_cnn": False})
-            cf_model_lstm_cnn_word_2.update({"char_embedding_dim": 64})
+        cf_common.update({"prefix_model": "model_{}_fold_{}".format(cf_common['type_model'], i)})
+        cf_common.update({"log_file": "log_{}_fold_{}.txt".format(cf_common['type_model'], i)})
 
-        if i == 3:
-            cf_model_lstm_cnn_word_2.update({'cnn_filter_num': 8})
-            cf_model_lstm_cnn_word_2.update({'window_size': [1, 2]})
-        if i == 4:
-            cf_model_lstm_cnn_word_2.update({'cnn_filter_num': 16})
-            cf_model_lstm_cnn_word_2.update({'window_size': [1, 2]})
-
-        train_model_dl(cf_common_2, cf_model_lstm_cnn_word_2)
-
-        # if cf_common['type_model'] == 'cnn_classify':
-        #     train_model_dl(cf_common, cf_model_cnn_classify)
-        #
-        # elif cf_common['type_model'] == 'lstm_cnn_word_char_base':
-        #     train_model_dl(cf_common, cf_model_char_base)
-        #
-        # elif cf_common['type_model'] == "lstm_cnn_lm":
-        #     train_model_dl(cf_common, cf_model_lstm_cnn_lm)
-        #
-        # elif cf_common['type_model'] == "lstm_cnn_word_case_1":
-        #     train_model_dl(cf_common, cf_model_lstm_cnn_word)
-
+        train_model_dl(cf_common, cf_model_cnn_classify)

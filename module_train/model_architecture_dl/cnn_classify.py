@@ -78,8 +78,9 @@ class CNNClassifyWordCharNgram(nn.Module):
 
     def compute(self, batch, training=True):
         inputs_word_emb = self.word_embedding_layer(batch.inputs_word)
-        inputs_word_emb = inputs_word_emb.permute(0, 2, 1)
-        inputs_word_emb = F.dropout2d(inputs_word_emb, self.dropout_cnn, training=training)
+        inputs_word_emb = self.dropout_ffw(inputs_word_emb)
+        # inputs_word_emb = inputs_word_emb.permute(0, 2, 1)
+        # inputs_word_emb = F.dropout2d(inputs_word_emb, self.dropout_cnn, training=training)
         word_ft = self.cnn_extract_word_ft(inputs_word_emb)
 
         ft = self.dropout_ffw(word_ft)
