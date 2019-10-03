@@ -328,8 +328,8 @@ def convert_dict_map_to_vector(path_file_dict_map, path_file_vector):
             wf.write(line_write)
 
 
-def make_data_without_augment(path_folder):
-    for i in range(1, 9):
+def make_data_without_augment(path_folder, k_fold=10):
+    for i in range(1, k_fold + 1):
         path_file = "{}/train_dl_id_{}".format(path_folder, i)
         path_new_file = "{}/train_dl_{}".format(path_folder, i)
         with open(path_new_file, "w") as wf:
@@ -386,11 +386,11 @@ if __name__ == '__main__':
     path_label = cf['train_label']
     # get_data_contest(path_raw_data, path_preprocess_data, path_process_punct, path_label)
     # handle_data_with_punc_emoji_space(path_preprocess_data, path_process_punct, is_train=False)
-    # split_train_test(cf['train_process_emoji_punct'],
-    #                  cf['path_folder_save_data_for_dl'],
-    #                  cf['name_train'],
-    #                  cf['name_test'],
-    #                  n_splits=8)
+    split_train_test(cf['train_process_emoji_punct'],
+                     cf['path_folder_save_data_for_dl'],
+                     cf['name_train'],
+                     cf['name_test'],
+                     n_splits=8)
     # make_corpus_data(cf['test_process_emoji_punct'], cf['path_corpus_data'], is_train=False)
 
     # making_exception_list_kw_from_synonym(cf)
@@ -427,5 +427,6 @@ if __name__ == '__main__':
     # make_fake_dataset_for_build_vocabs(cf['path_corpus_data'])
     # train_embedding_fasttext(cf)
     # convert_dict_map_to_vector("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/support_data/dict_map_comment.pkl", "out_embedding.txt")
-    make_data_without_augment("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_for_train/dl/data_k_fold")
+    path_fold = "/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_for_train/dl/data_k_fold"
+    make_data_without_augment(path_fold, k_fold=8)
     # make_data_full_train_without_augment("/home/trangtv/Documents/project/HateSpeechDectection/module_dataset/dataset/data_for_train/dl/data_full/train_process_emoji_punct.csv", "train_without_augment.txt")

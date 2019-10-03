@@ -1,6 +1,0 @@
-model_name,accuracy_train
-svm_model.pkl,1.0
-random_forest_model.pkl,1.0
-xgboost_model.pkl,1.0
-lgbm_model.pkl,0.67
-graident_boosting_model.pkl,1.0

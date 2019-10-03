@@ -213,15 +213,15 @@
 # # print(n_a)
 # #
 # #
-import torch
-import torch.nn.functional as F
-a = torch.Tensor([[-11,2,-3]])
-b = a[0]
-print(b)
-# print(a)
-# d = F.log_softmax(a, dim=-1)
-d = F.softmax(b)
-print(d)
+# import torch
+# import torch.nn.functional as F
+# a = torch.Tensor([[-11,2,-3]])
+# b = a[0]
+# print(b)
+# # print(a)
+# # d = F.log_softmax(a, dim=-1)
+# d = F.softmax(b)
+# print(d)
 # print(d)
 # F.dropout2d(a, 0.2, )
 # d = {"a": [2 ]}
@@ -251,3 +251,11 @@ print(d)
 # for e_key, e_value in dict_model.items():
 #     print(e_key)
 # # print(dict_model)
+a = [[1,2,3], [4,5,6]]
+import numpy as np
+
+a_np = np.array(a)
+print(np.mean(a_np, axis=0))
+a.append(4)
+print(a)
+print(sum(a)/3)

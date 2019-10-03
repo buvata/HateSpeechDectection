@@ -7,7 +7,6 @@ from module_train.model_architecture_dl.lstm_cnn_word import LSTMCNNWord
 from module_dataset.preprocess_data.hanlde_dataloader import *
 
 from module_train.train_dl import Trainer
-from module_train.train_ml import *
 
 
 def train_model_dl(cf_common, cf_model):
@@ -30,7 +29,8 @@ def train_model_dl(cf_common, cf_model):
                                       batch_size=cf_common['batch_size'],
                                       cache_folder=cf_common['cache_folder'],
                                       name_vocab=cf_common['name_vocab'],
-                                      path_vocab_pre_built=cf_common['path_vocab_pre_built'])
+                                      path_vocab_pre_built=cf_common['path_vocab_pre_built'],
+                                      sort_key=cf_common['sort_key'])
 
         data_train_iter = data['iters'][0]
 
@@ -125,9 +125,38 @@ def train_model_dl(cf_common, cf_model):
     trainer.train(cf_common['num_epochs'])
 
 
-def train_ml(path_save_model, path_data, name_train, name_test=None):
-    result = train_all_ml_model(path_save_model, path_data, name_train, name_test)
-    print(result)
+def train_k_fold(cf_common, cf_model):
+    path_data = cf_common['path_data']
+
+    data = load_data_with_k_fold(path_data,
+                                 device_set=cf_common['device_set'],
+                                 min_freq_word=cf_common['min_freq_word'],
+                                 min_freq_char=cf_common['min_freq_char'],
+                                 batch_size=cf_common['batch_size'],
+                                 cache_folder=cf_common['cache_folder'],
+                                 name_vocab=cf_common['name_vocab'],
+                                 path_vocab_pre_built=cf_common['path_vocab_pre_built'],
+                                 sort_key=cf_common['sort_key'])
+
+    data_train_iter = data['iters'][0]
+    data_test_iter = data['iters'][1]
+
+    model = CNNClassifyWordCharNgram.create(cf_common['path_save_model'] + cf_common['folder_model'],
+                                            cf_model,
+                                            data['vocabs'],
+                                            device_set=cf_common['device_set'])
+
+    print("!!Load dataset done !!\n")
+    trainer = Trainer(cf_common['path_save_model'] + cf_common['folder_model'],
+                      model,
+                      cf_model,
+                      cf_common['prefix_model'],
+                      cf_common['log_file'],
+                      len(data['vocabs'][2]),
+                      data_train_iter,
+                      data_test_iter)
+
+    trainer.train_k_fold(cf_common['num_epochs'])
 
 
 if __name__ == '__main__':
