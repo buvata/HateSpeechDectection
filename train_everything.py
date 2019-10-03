@@ -250,12 +250,19 @@
 # }
 # for e_key, e_value in dict_model.items():
 #     print(e_key)
-# # print(dict_model)
-a = [[1,2,3], [4,5,6]]
-import numpy as np
+# a = "model_cnn_classify_fold_1_epoch_30_train_loss_0.1542_macro0.7232_full__0.98_0.6_0.59_test_loss_0.1922_macro0.7129_full__0.98_0.49_0.68"
+# b = a.split("macro")
+# c = float(b[2].split("_")[0])
+# d = [2, 3, 4]
+# e = [e_d * c for e_d in d]
+# print(e)
+# import torch
+# import torch.nn.functional as F
+# a = torch.Tensor([-1,2,3])
+# print(a)
+# print(F.softmax(a))
+# print(F.softmax(a, dim=0))
+a = [1, 0, 0, 1]
 
-a_np = np.array(a)
-print(np.mean(a_np, axis=0))
-a.append(4)
-print(a)
-print(sum(a)/3)
+b = max(set(a), key=a.count)
+print(b)
