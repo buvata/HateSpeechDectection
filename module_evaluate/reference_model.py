@@ -119,51 +119,51 @@ def get_average_predict_model(path_submission, path_data_test,
     dict_predict = defaultdict(list)
     dict_predict_raw = defaultdict(list)
 
-    for e_key, e_value in dict_model.items():
-        type_model = e_value['type_model']
-        list_checkpoints = e_value['list_checkpoint']
-        path_save_model = e_value['folder_model']
-
-        for e_checkpoint in list_checkpoints:
-            arr_check = e_checkpoint.split("macro")
-            fold_1 = float(arr_check[1].split("_")[0])
-            fold_2 = float(arr_check[2].split("_")[0])
-            weighted_checkpoint = (fold_1 + fold_2 * 2) / 3
-
-            e_checkpoint = os.path.join(path_save_model, e_checkpoint)
-            if type_model == "cnn_classify":
-                model = CNNClassifyWordCharNgram.load(path_save_model, e_checkpoint)
-
-            elif type_model == "lstm_cnn_word_char_based":
-                model = LSTMCNNWordCharBase.load(path_save_model, e_checkpoint)
-
-            elif type_model == "lstm_cnn_lm":
-                model = LSTMCNNWordCharLM.load(path_save_model, e_checkpoint)
-
-            elif type_model == "lstm_cnn_word":
-                model = LSTMCNNWord.load(path_save_model, e_checkpoint)
-
-            vocab_word, vocab_char, vocab_label = model.vocabs
-            for idx, e_sent in enumerate(list_test_sent):
-
-                data_e_line = get_input_processor_words(e_sent, type_model, vocab_word, vocab_char)
-                predict = model(data_e_line)
-
-                # print("{}|{}\n".format(e_sent, torch.max(predict, 1)[1].cpu().numpy().tolist()[0]))
-
-                e_predict = predict[0]
-                output_score_soft_max = F.softmax(e_predict).cpu().numpy().tolist()
-                dict_predict_raw[list_id[idx]].append(output_score_soft_max)
-                # output_score_soft_max = [e_score * weighted_checkpoint for e_score in output_score_soft_max]
-                predict_point = torch.max(predict, 1)[1].cpu().numpy().tolist()[0]
-
-                dict_predict[list_id[idx]].append(predict_point)
-
-    with open("dict_predict_cnn.pkl", "wb") as dict_write:
-        pickle.dump(dict_predict, dict_write, protocol=pickle.HIGHEST_PROTOCOL)
-
-    with open("dict_predict_raw.pkl", "wb") as dict_write_raw:
-        pickle.dump(dict_predict_raw, dict_write_raw, protocol=pickle.HIGHEST_PROTOCOL)
+    # for e_key, e_value in dict_model.items():
+    #     type_model = e_value['type_model']
+    #     list_checkpoints = e_value['list_checkpoint']
+    #     path_save_model = e_value['folder_model']
+    #
+    #     for e_checkpoint in list_checkpoints:
+    #         arr_check = e_checkpoint.split("macro")
+    #         fold_1 = float(arr_check[1].split("_")[0])
+    #         fold_2 = float(arr_check[2].split("_")[0])
+    #         weighted_checkpoint = (fold_1 + fold_2 * 2) / 3
+    #
+    #         e_checkpoint = os.path.join(path_save_model, e_checkpoint)
+    #         if type_model == "cnn_classify":
+    #             model = CNNClassifyWordCharNgram.load(path_save_model, e_checkpoint)
+    #
+    #         elif type_model == "lstm_cnn_word_char_based":
+    #             model = LSTMCNNWordCharBase.load(path_save_model, e_checkpoint)
+    #
+    #         elif type_model == "lstm_cnn_lm":
+    #             model = LSTMCNNWordCharLM.load(path_save_model, e_checkpoint)
+    #
+    #         elif type_model == "lstm_cnn_word":
+    #             model = LSTMCNNWord.load(path_save_model, e_checkpoint)
+    #
+    #         vocab_word, vocab_char, vocab_label = model.vocabs
+    #         for idx, e_sent in enumerate(list_test_sent):
+    #
+    #             data_e_line = get_input_processor_words(e_sent, type_model, vocab_word, vocab_char)
+    #             predict = model(data_e_line)
+    #
+    #             # print("{}|{}\n".format(e_sent, torch.max(predict, 1)[1].cpu().numpy().tolist()[0]))
+    #
+    #             e_predict = predict[0]
+    #             output_score_soft_max = F.softmax(e_predict).cpu().numpy().tolist()
+    #             dict_predict_raw[list_id[idx]].append(output_score_soft_max)
+    #             # output_score_soft_max = [e_score * weighted_checkpoint for e_score in output_score_soft_max]
+    #             predict_point = torch.max(predict, 1)[1].cpu().numpy().tolist()[0]
+    #
+    #             dict_predict[list_id[idx]].append(predict_point)
+    #
+    # with open("dict_predict_cnn.pkl", "wb") as dict_write:
+    #     pickle.dump(dict_predict, dict_write, protocol=pickle.HIGHEST_PROTOCOL)
+    #
+    # with open("dict_predict_raw.pkl", "wb") as dict_write_raw:
+    #     pickle.dump(dict_predict_raw, dict_write_raw, protocol=pickle.HIGHEST_PROTOCOL)
 
     with open("dict_predict_cnn.pkl", "rb") as read_dict:
         dict_predict = pickle.load(read_dict)
@@ -191,12 +191,12 @@ def get_average_predict_model(path_submission, path_data_test,
                 print("check___")
                 print(dict_predict_raw[e_key])
                 print("check___")
-            predict_label = check_list_vote(e_predict_list)
+            predict_label = check_list_vote(e_predict_list, dict_predict_raw[e_key])
             line_write = "{},{}\n".format(e_key, predict_label)
             wf.write(line_write)
 
 
-def check_list_vote(list_predict):
+def check_list_vote(list_predict, list_raw_predict):
     count_predict_not_zero = 0
     l_predict_not_zero = []
     for e_predict in list_predict:
@@ -205,7 +205,24 @@ def check_list_vote(list_predict):
             l_predict_not_zero.append(e_predict)
 
     if count_predict_not_zero == 1:
-        predict_label = l_predict_not_zero[0]
+        print(list_predict)
+        if 1 in list_predict:
+
+            element_index = list_predict.index(1)
+            predict_raw = list_raw_predict[element_index]
+            print(predict_raw)
+            if predict_raw[1] < 0.8:
+                predict_label = 0
+            else:
+                predict_label = 1
+        else:
+            element_index = list_predict.index(2)
+            predict_raw = list_raw_predict[element_index]
+            if predict_raw[2] < 0.8:
+                predict_label = 0
+            else:
+                predict_label = 2
+
     if count_predict_not_zero == 3 or count_predict_not_zero ==5 or count_predict_not_zero == 7:
         predict_label = max(set(l_predict_not_zero), key=l_predict_not_zero.count)
     if count_predict_not_zero == 0 or count_predict_not_zero == 2:

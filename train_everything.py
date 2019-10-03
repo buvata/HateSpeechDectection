@@ -262,7 +262,5 @@
 # print(a)
 # print(F.softmax(a))
 # print(F.softmax(a, dim=0))
-a = [1, 0, 0, 1]
-
-b = max(set(a), key=a.count)
-print(b)
+a = [0,1,1,2]
+print(a.index(3))
